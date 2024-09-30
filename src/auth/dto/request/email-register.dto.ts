@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, Matches } from 'class-validator';
+import { IsEmail, Matches, MinLength, MaxLength } from 'class-validator';
 
 export class EmailRegisterDto {
   @ApiProperty()
@@ -12,4 +12,9 @@ export class EmailRegisterDto {
     /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
   )
   readonly password: string;
+
+  @ApiProperty()
+  @MinLength(1)
+  @MaxLength(50)
+  readonly name: string;
 }

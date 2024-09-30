@@ -21,6 +21,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
       .send({
         email: 'test',
         password: 'test',
+        name: 'test',
       });
 
     expect(status).toBe(400);
@@ -32,6 +33,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
       .send({
         email: 'test@test.com',
         password: 't1@',
+        name: 'test',
       });
 
     expect(status).toBe(400);
@@ -43,6 +45,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
       .send({
         email: 'test@test.com',
         password: 'abcdefg12345678!@#$%%^&',
+        name: 'test',
       });
 
     expect(status).toBe(400);
@@ -54,6 +57,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
       .send({
         email: 'test@test.com',
         password: 'abcdefdsfg!!',
+        name: 'test',
       });
 
     expect(status).toBe(400);
@@ -65,9 +69,23 @@ describe('POST /register/email - 이메일 회원가입', () => {
       .send({
         email: 'test@test.com',
         password: 'abcdefg1234',
+        name: 'test',
       });
 
     expect(status).toBe(400);
+  });
+
+  it('이름이 1자리 미만인 경우 400 에러를 반환한다', async () => {
+    const { status, body } = await request(app.getHttpServer())
+      .post('/auth/register/email')
+      .send({
+        email: 'test@test.com',
+        password: 'abcdefg1234!',
+        name: '',
+      });
+
+    expect(status).toBe(400);
+    console.log(body);
   });
 
   it('이메일과 비밀번호가 올바른 경우 201 상태코드를 반환한다', async () => {
@@ -76,6 +94,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
       .send({
         email: 'test@test.com',
         password: 'abcdefg1234!',
+        name: 'test',
       });
 
     expect(status).toBe(201);
