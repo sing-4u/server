@@ -1,8 +1,10 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { EmailRegisterDto } from './dto/request';
 import { JwtTokenDto } from './dto/request/response';
 import { AuthService } from './auth.service';
+import { JwtGuard } from './guards';
+import { CurrentUser } from 'src/common/pipes/decorators';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -18,5 +20,12 @@ export class AuthController {
     @Body() registerDto: EmailRegisterDto,
   ): Promise<JwtTokenDto> {
     return await this.authService.registerEmail(registerDto);
+  }
+
+  @Get('test')
+  @UseGuards(JwtGuard)
+  async test(@CurrentUser() id: string) {
+    console.log(id);
+    return 'test';
   }
 }

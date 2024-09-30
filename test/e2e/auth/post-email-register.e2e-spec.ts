@@ -157,7 +157,6 @@ describe('POST /register/email - 이메일 회원가입', () => {
     expect(status).toBe(201);
     const user = await prisma.user.findFirst();
     expect(user!.password).not.toBe('abcdefg1234!');
-    console.log(user!.password);
   });
 
   it('회원가입 성공 시 accessToken과 refreshToken을 반환한다', async () => {
@@ -176,5 +175,10 @@ describe('POST /register/email - 이메일 회원가입', () => {
     expect(body.refreshToken).toBeDefined();
     const user = await prisma.user.findFirst();
     expect(user!.refreshToken).toBe(body.refreshToken);
+
+    const { status: status2 } = await request(app.getHttpServer())
+      .get('/auth/test')
+      .set('Authorization', `Bearer ${body.accessToken}`);
+    expect(status2).toBe(200);
   });
 });
