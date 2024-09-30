@@ -6,6 +6,7 @@ import {
   UseGuards,
   Patch,
   Req,
+  HttpCode,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,8 +16,8 @@ import {
   ApiBearerAuth,
   ApiHeader,
 } from '@nestjs/swagger';
-import { EmailRegisterDto } from './dto/request';
-import { JwtTokenDto } from './dto/request/response';
+import { EmailRegisterDto, EmailLoginDto } from './dto/request';
+import { JwtTokenDto } from './dto/response';
 import { AuthService } from './auth.service';
 import { JwtGuard, RefreshGuard } from './guards';
 import { CurrentUser } from 'src/common/pipes/decorators';
@@ -40,7 +41,7 @@ export class AuthController {
 
   @ApiOperation({ summary: '토큰 재발급' })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: '토큰 재발급 성공',
     type: JwtTokenDto,
   })
@@ -58,6 +59,17 @@ export class AuthController {
   ): Promise<JwtTokenDto> {
     const refreshToken = req.headers.authorization!.split(' ')[1];
     return await this.authService.refresh(id, refreshToken);
+  }
+
+  @ApiOperation({ summary: '이메일 로그인' })
+  @ApiBody({ type: EmailLoginDto })
+  @ApiResponse({ status: 200, description: '로그인 성공', type: JwtTokenDto })
+  @Post('login/email')
+  @HttpCode(200)
+  async loginEmail(
+    @Body() { email, password }: EmailLoginDto,
+  ): Promise<JwtTokenDto> {
+    return await this.authService.loginEmail(email, password);
   }
 
   @Get('test')

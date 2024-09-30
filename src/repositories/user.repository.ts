@@ -39,4 +39,17 @@ export class UserRepository {
       select: { refreshToken: true },
     });
   }
+
+  async findOneEmailUser(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        provider: 'EMAIL',
+        email,
+      },
+    });
+    if (!user) {
+      throw new HttpException('존재하지 않는 유저입니다', 404);
+    }
+    return user;
+  }
 }

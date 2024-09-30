@@ -33,6 +33,22 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  async loginEmail(email: string, password: string) {
+    const user = await this.userRepository.findOneEmailUser(email);
+    const isValidPassword = await argon2.verify(user.password!, password);
+
+    if (!isValidPassword) {
+      throw new HttpException('Password is invalid', 401);
+    }
+
+    const accessToken = this.createAccessToken(user.id);
+    const refreshToken = this.createRefreshToken(user.id);
+
+    await this.userRepository.saveRefreshToken(user.id, refreshToken);
+
+    return { accessToken, refreshToken };
+  }
+
   createAccessToken(userId: string) {
     return this.jwtService.sign({ id: userId });
   }
