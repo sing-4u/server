@@ -32,4 +32,11 @@ export class UserRepository {
       data: { refreshToken },
     });
   }
+
+  async findRefreshToken(userId: string) {
+    return await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { refreshToken: true },
+    });
+  }
 }
