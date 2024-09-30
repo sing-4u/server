@@ -8,9 +8,11 @@ datasource db {
 }
 
 model User {
-  id         String  @id @default(uuid())
-  provider   String
-  providerId String?
-  email      String  @unique
-  name       String
+  id           String  @id @default(uuid())
+  provider     String
+  providerId   String?
+  password     String?
+  email        String  @unique
+  name         String
+  refreshToken String?
 }
