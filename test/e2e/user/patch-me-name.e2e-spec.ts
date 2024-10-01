@@ -5,7 +5,7 @@ import { AppModule } from 'src/app.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { register } from '../helpers';
 
-describe('PATCH /users/name - 이름 변경', () => {
+describe('PATCH /users/me/name - 이름 변경', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
@@ -29,7 +29,7 @@ describe('PATCH /users/name - 이름 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/name')
+      .patch('/users/me/name')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({});
 
@@ -43,7 +43,7 @@ describe('PATCH /users/name - 이름 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/name')
+      .patch('/users/me/name')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ name: 'newName' });
 

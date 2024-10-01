@@ -16,6 +16,7 @@ model User {
   name         String
   refreshToken String?
   createdAt    DateTime @default(now())
+  image        String?
 
   @@unique([provider, providerId])
 }

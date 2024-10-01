@@ -5,7 +5,7 @@ import { AppModule } from 'src/app.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { register } from '../helpers';
 
-describe('PATCH /users/email - 이메일 변경', () => {
+describe('PATCH /users/me/email - 이메일 변경', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
@@ -29,7 +29,7 @@ describe('PATCH /users/email - 이메일 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/email')
+      .patch('/users/me/email')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ email: 'invalid' });
 
@@ -43,7 +43,7 @@ describe('PATCH /users/email - 이메일 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/email')
+      .patch('/users/me/email')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ email: 'test@test.com', password: 'invalid' });
 
@@ -64,7 +64,7 @@ describe('PATCH /users/email - 이메일 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/email')
+      .patch('/users/me/email')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ email: 'test@test.com', password: 'password123!' });
 
@@ -81,7 +81,7 @@ describe('PATCH /users/email - 이메일 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/email')
+      .patch('/users/me/email')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ email: 'test2@test.com', password: 'password123!' });
 

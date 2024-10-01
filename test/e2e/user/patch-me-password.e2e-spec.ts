@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { register } from '../helpers';
 import * as argon2 from 'argon2';
 
-describe('PATCH /users/password - 비밀번호 변경', () => {
+describe('PATCH /users/me/password - 비밀번호 변경', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
@@ -32,7 +32,7 @@ describe('PATCH /users/password - 비밀번호 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/password')
+      .patch('/users/me/password')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ oldPassword: 'password123!', newPassword: 'a1!' });
 
@@ -48,7 +48,7 @@ describe('PATCH /users/password - 비밀번호 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/password')
+      .patch('/users/me/password')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         oldPassword: 'password123!',
@@ -67,7 +67,7 @@ describe('PATCH /users/password - 비밀번호 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/password')
+      .patch('/users/me/password')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         oldPassword: 'password123!',
@@ -86,7 +86,7 @@ describe('PATCH /users/password - 비밀번호 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/password')
+      .patch('/users/me/password')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         oldPassword: 'password123!',
@@ -105,7 +105,7 @@ describe('PATCH /users/password - 비밀번호 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/password')
+      .patch('/users/me/password')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         oldPassword: 'password123!',
@@ -124,7 +124,7 @@ describe('PATCH /users/password - 비밀번호 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/password')
+      .patch('/users/me/password')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         oldPassword: 'different',
@@ -143,7 +143,7 @@ describe('PATCH /users/password - 비밀번호 변경', () => {
 
     // when
     const { status } = await request(app.getHttpServer())
-      .patch('/users/password')
+      .patch('/users/me/password')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         oldPassword: 'password123!',

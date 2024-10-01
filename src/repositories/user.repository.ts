@@ -124,4 +124,18 @@ export class UserRepository {
     });
     return;
   }
+
+  async findOneById(id: string) {
+    return await this.prisma.user.findUniqueOrThrow({
+      where: { id },
+    });
+  }
+
+  async updateProfileImage(userId: string, image: string | null) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { image },
+    });
+    return;
+  }
 }
