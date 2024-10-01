@@ -22,7 +22,9 @@ import {
   UpdateUserNameDto,
   UpdateEmailDto,
   UpdatePasswordDto,
+  UpdateImageDto,
 } from './dto/user/request';
+import { ImageDto } from './dto/user/response';
 import { CurrentUser } from 'src/common/pipes/decorators';
 
 @ApiTags('users')
@@ -77,14 +79,15 @@ export class UserController {
       '이미지 파일은 multipart/formdata 형식이며 이미지 파일이 없거나 null인 경우 이미지 삭제로 간주합니다',
   })
   @ApiConsumes('multipart/form-data')
-  @ApiResponse({ status: 201, description: '성공' })
+  @ApiBody({ type: UpdateImageDto })
+  @ApiResponse({ status: 201, description: '성공', type: ImageDto })
   @Patch('me/image')
   @HttpCode(201)
   @UseInterceptors(FileInterceptor('image'))
   async updateProfileImage(
     @CurrentUser() userId: string,
     @UploadedFile() image?: Express.Multer.File,
-  ) {
+  ): Promise<ImageDto> {
     return await this.userService.updateProfileImage(userId, image);
   }
 }
