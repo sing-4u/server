@@ -8,7 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
 import { UserService } from 'src/providers/user.service';
-import { UpdateUserNameDto } from './dto/user/request';
+import { UpdateUserNameDto, UpdateEmailDto } from './dto/user/request';
 import { CurrentUser } from 'src/common/pipes/decorators';
 
 @ApiTags('users')
@@ -28,5 +28,18 @@ export class UserController {
     @Body() { name }: UpdateUserNameDto,
   ) {
     await this.userService.updateName(userId, name);
+  }
+
+  @ApiOperation({ summary: '이메일 변경' })
+  @ApiBody({ type: UpdateEmailDto })
+  @ApiResponse({ status: 204, description: '성공' })
+  @ApiResponse({ status: 409, description: '이미 사용중인 이메일' })
+  @Patch('email')
+  @HttpCode(204)
+  async updateEmail(
+    @CurrentUser() userId: string,
+    @Body() { email, password }: UpdateEmailDto,
+  ) {
+    await this.userService.updateEmail(userId, { email, password });
   }
 }

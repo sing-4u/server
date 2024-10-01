@@ -91,4 +91,29 @@ export class UserRepository {
     });
     return;
   }
+
+  async updateEmail(userId: string, email: string) {
+    try {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { email },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new HttpException('이미 존재하는 이메일입니다.', 409);
+        }
+      }
+      throw error;
+    }
+    return;
+  }
+
+  async findPasswordById(userId: string) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { password: true },
+    });
+    return user.password!;
+  }
 }
