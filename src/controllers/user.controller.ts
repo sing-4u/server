@@ -8,7 +8,11 @@ import {
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
 import { UserService } from 'src/providers/user.service';
-import { UpdateUserNameDto, UpdateEmailDto } from './dto/user/request';
+import {
+  UpdateUserNameDto,
+  UpdateEmailDto,
+  UpdatePasswordDto,
+} from './dto/user/request';
 import { CurrentUser } from 'src/common/pipes/decorators';
 
 @ApiTags('users')
@@ -33,6 +37,7 @@ export class UserController {
   @ApiOperation({ summary: '이메일 변경' })
   @ApiBody({ type: UpdateEmailDto })
   @ApiResponse({ status: 204, description: '성공' })
+  @ApiResponse({ status: 401, description: '비밀번호가 틀림' })
   @ApiResponse({ status: 409, description: '이미 사용중인 이메일' })
   @Patch('email')
   @HttpCode(204)
@@ -41,5 +46,18 @@ export class UserController {
     @Body() { email, password }: UpdateEmailDto,
   ) {
     await this.userService.updateEmail(userId, { email, password });
+  }
+
+  @ApiOperation({ summary: '비밀번호 변경' })
+  @ApiBody({ type: UpdatePasswordDto })
+  @ApiResponse({ status: 204, description: '성공' })
+  @ApiResponse({ status: 401, description: '비밀번호가 틀림' })
+  @Patch('password')
+  @HttpCode(204)
+  async updatePassword(
+    @CurrentUser() userId: string,
+    @Body() { oldPassword, newPassword }: UpdatePasswordDto,
+  ) {
+    await this.userService.updatePassword(userId, { oldPassword, newPassword });
   }
 }

@@ -23,4 +23,20 @@ export class UserService {
     await this.userRepository.updateEmail(userId, email);
     return;
   }
+
+  async updatePassword(
+    userId: string,
+    { oldPassword, newPassword }: { oldPassword: string; newPassword: string },
+  ) {
+    const storedPassword = await this.userRepository.findPasswordById(userId);
+    const isValidPassword = await argon2.verify(storedPassword, oldPassword);
+
+    if (!isValidPassword) {
+      throw new HttpException('비밀번호가 일치하지 않습니다.', 401);
+    }
+
+    const hashedPassword = await argon2.hash(newPassword);
+    await this.userRepository.updatePassword(userId, hashedPassword);
+    return;
+  }
 }
