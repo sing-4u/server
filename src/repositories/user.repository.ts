@@ -83,4 +83,12 @@ export class UserRepository {
       throw error;
     }
   }
+
+  async updateName(userId: string, name: string) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { name },
+    });
+    return;
+  }
 }
