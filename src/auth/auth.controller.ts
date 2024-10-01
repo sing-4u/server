@@ -16,7 +16,7 @@ import {
   ApiBearerAuth,
   ApiHeader,
 } from '@nestjs/swagger';
-import { EmailRegisterDto, EmailLoginDto } from './dto/request';
+import { EmailRegisterDto, EmailLoginDto, SocialLoginDto } from './dto/request';
 import { JwtTokenDto } from './dto/response';
 import { AuthService } from './auth.service';
 import { JwtGuard, RefreshGuard } from './guards';
@@ -42,7 +42,7 @@ export class AuthController {
   @ApiOperation({ summary: '토큰 재발급' })
   @ApiResponse({
     status: 200,
-    description: '토큰 재발급 성공',
+    description: '토큰 재발급 성공 - accT 뿐만 아니라 refT도 새로 발급합니다',
     type: JwtTokenDto,
   })
   @ApiBearerAuth()
@@ -64,14 +64,34 @@ export class AuthController {
   @ApiOperation({ summary: '이메일 로그인' })
   @ApiBody({ type: EmailLoginDto })
   @ApiResponse({ status: 200, description: '로그인 성공', type: JwtTokenDto })
+  @ApiResponse({ status: 404, description: '존재하지 않는 유저' })
   @Post('login/email')
   @HttpCode(200)
-  async loginEmail(
+  async emailLogin(
     @Body() { email, password }: EmailLoginDto,
   ): Promise<JwtTokenDto> {
-    return await this.authService.loginEmail(email, password);
+    return await this.authService.emailLogin(email, password);
   }
 
+  @ApiOperation({
+    summary: '소셜 로그인 (처음 로그인 한거면 회원생성까지 합니다)',
+  })
+  @ApiBody({ type: SocialLoginDto })
+  @ApiResponse({ status: 200, description: '로그인 성공', type: JwtTokenDto })
+  @ApiResponse({
+    status: 409,
+    description:
+      '이미 존재하는 이메일 - 해당 소셜 로그인으로 처음 로그인 했을 때 회원생성단계에서 중복된 이메일이 발견된 경우',
+  })
+  @Post('login/social')
+  @HttpCode(200)
+  async socialLogin(
+    @Body() { provider, providerCode }: SocialLoginDto,
+  ): Promise<JwtTokenDto> {
+    return await this.authService.socialLogin(provider, providerCode);
+  }
+
+  @ApiBearerAuth()
   @Get('test')
   @UseGuards(JwtGuard)
   async test() {

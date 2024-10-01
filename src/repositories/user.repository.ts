@@ -52,4 +52,35 @@ export class UserRepository {
     }
     return user;
   }
+
+  async findOneByProvider(provider: string, providerId: string) {
+    return await this.prisma.user.findUnique({
+      where: {
+        provider_providerId: {
+          provider,
+          providerId,
+        },
+      },
+    });
+  }
+
+  async createByProvider(createInput: {
+    provider: string;
+    providerId: string;
+    email: string;
+    name: string;
+  }) {
+    try {
+      return await this.prisma.user.create({
+        data: createInput,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new HttpException('이미 존재하는 이메일입니다.', 409);
+        }
+      }
+      throw error;
+    }
+  }
 }

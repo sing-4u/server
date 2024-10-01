@@ -33,7 +33,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async loginEmail(email: string, password: string) {
+  async emailLogin(email: string, password: string) {
     const user = await this.userRepository.findOneEmailUser(email);
     const isValidPassword = await argon2.verify(user.password!, password);
 
@@ -78,4 +78,69 @@ export class AuthService {
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
+
+  async socialLogin(provider: 'GOOGLE', providerCode: string) {
+    const googleAccessToken = await this.getGoogleAccessToken(providerCode);
+    const profile = await this.getGoogleProfile(googleAccessToken);
+
+    let user = await this.userRepository.findOneByProvider(
+      provider,
+      profile.id,
+    );
+
+    if (!user) {
+      user = await this.userRepository.createByProvider({
+        provider,
+        providerId: profile.id,
+        email: profile.email,
+        name: profile.email.split('@')[0],
+      });
+    }
+
+    const accessToken = this.createAccessToken(user.id);
+    const refreshToken = this.createRefreshToken(user.id);
+
+    await this.userRepository.saveRefreshToken(user.id, refreshToken);
+
+    return { accessToken, refreshToken };
+  }
+
+  async getGoogleAccessToken(code: string) {
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code,
+        client_id: this.configService.get('GOOGLE_CLIENT_ID'),
+        client_secret: this.configService.get('GOOGLE_CLIENT_SECRET'),
+        redirect_uri: this.configService.get('GOOGLE_REDIRECT_URI'),
+        grant_type: 'authorization_code',
+      }),
+    });
+    const data = await response.json();
+    if (!data.access_token) {
+      throw new HttpException('Invalid code', 400);
+    }
+    return data.access_token;
+  }
+
+  async getGoogleProfile(accessToken: string) {
+    const response = await fetch(
+      `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${accessToken}`,
+    );
+    const data = (await response.json()) as GoogleProfile;
+    if (!data.id) {
+      throw new HttpException('Invalid access token', 500);
+    }
+    return data;
+  }
 }
+
+export type GoogleProfile = {
+  id: string;
+  email: string;
+  verified_email: boolean;
+  picture: string;
+};
