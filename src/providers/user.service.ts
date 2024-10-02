@@ -68,4 +68,15 @@ export class UserService {
       };
     }
   }
+
+  async getMyInfo(userId: string) {
+    let user = await this.userRepository.findOneById(userId);
+    if (user.image) {
+      user = {
+        ...user,
+        image: this.awsService.getProfileImageUrl(user.image),
+      };
+    }
+    return user;
+  }
 }

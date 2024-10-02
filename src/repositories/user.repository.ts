@@ -128,6 +128,13 @@ export class UserRepository {
   async findOneById(id: string) {
     return await this.prisma.user.findUniqueOrThrow({
       where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        image: true,
+        provider: true,
+      },
     });
   }
 

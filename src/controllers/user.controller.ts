@@ -6,6 +6,7 @@ import {
   HttpCode,
   UseInterceptors,
   UploadedFile,
+  Get,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -24,11 +25,13 @@ import {
   UpdatePasswordDto,
   UpdateImageDto,
 } from './dto/user/request';
-import { ImageDto } from './dto/user/response';
+import { ImageDto, UserProfileDto } from './dto/user/response';
 import { CurrentUser } from 'src/common/pipes/decorators';
 
 @ApiTags('users')
 @ApiBearerAuth()
+@ApiResponse({ status: 400, description: '유효성 검사 실패' })
+@ApiResponse({ status: 401, description: '인증 실패' })
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UserController {
@@ -89,5 +92,12 @@ export class UserController {
     @UploadedFile() image?: Express.Multer.File,
   ): Promise<ImageDto> {
     return await this.userService.updateProfileImage(userId, image);
+  }
+
+  @ApiOperation({ summary: '내 정보 조회' })
+  @ApiResponse({ status: 200, description: '성공', type: UserProfileDto })
+  @Get('me')
+  async getMe(@CurrentUser() userId: string): Promise<UserProfileDto> {
+    return await this.userService.getMyInfo(userId);
   }
 }
