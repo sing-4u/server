@@ -15,6 +15,6 @@ export class EmailRegisterDto {
 
   @ApiProperty()
   @MinLength(1)
-  @MaxLength(50)
+  @MaxLength(20)
   readonly name: string;
 }
