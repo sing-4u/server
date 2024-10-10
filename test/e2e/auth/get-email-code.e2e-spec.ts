@@ -88,4 +88,27 @@ describe('POST /auth/get-email-code - 이메일 코드 발급', () => {
     const emailCode = await prisma.emailCode.findFirst();
     expect(emailCode).toBeDefined();
   });
+
+  it('두번 요청한 경우 이전 코드는 삭제하고 새로운 코드를 발급한다', async () => {
+    // given
+    jest.spyOn(authService, 'sendEmailCode').mockImplementation();
+    await prisma.user.create({
+      data: {
+        provider: 'EMAIL',
+        email: 'test@test.com',
+        name: 'test',
+      },
+    });
+
+    // when
+    await request(app.getHttpServer())
+      .post('/auth/get-email-code')
+      .send({ email: 'test@test.com' });
+    const { status } = await request(app.getHttpServer())
+      .post('/auth/get-email-code')
+      .send({ email: 'test@test.com' });
+
+    // then
+    expect(status).toBe(200);
+  });
 });

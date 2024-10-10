@@ -151,6 +151,14 @@ export class AuthService {
     return;
   }
 
+  async verifyEmailCode(email: string, code: string) {
+    const { user } = await this.userRepository.findUserByEmailCode(email, code);
+
+    const accessToken = this.createAccessToken(user.id);
+
+    return { accessToken };
+  }
+
   generateEmailCode() {
     const arr = [];
     for (let i = 0; i < 6; i++) {

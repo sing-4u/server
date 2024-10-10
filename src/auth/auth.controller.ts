@@ -21,8 +21,9 @@ import {
   EmailLoginDto,
   SocialLoginDto,
   GetEmailCodeDto,
+  VerifyEmailCodeDto,
 } from './dto/request';
-import { JwtTokenDto } from './dto/response';
+import { JwtTokenDto, AccessTokenDto } from './dto/response';
 import { AuthService } from './auth.service';
 import { JwtGuard, RefreshGuard } from './guards';
 import { CurrentUser } from 'src/common/decorators';
@@ -108,6 +109,22 @@ export class AuthController {
   @HttpCode(200)
   async sendEmailCode(@Body() { email }: GetEmailCodeDto) {
     return await this.authService.sendEmailCode(email);
+  }
+
+  @ApiOperation({ summary: '이메일 코드 검증' })
+  @ApiBody({ type: VerifyEmailCodeDto })
+  @ApiResponse({
+    status: 200,
+    description: '이메일 코드 검증 성공',
+    type: AccessTokenDto,
+  })
+  @ApiResponse({ status: 401, description: '코드가 없거나 불일치' })
+  @Post('verify-email-code')
+  @HttpCode(200)
+  async verifyEmailCode(
+    @Body() { email, code }: VerifyEmailCodeDto,
+  ): Promise<AccessTokenDto> {
+    return await this.authService.verifyEmailCode(email, code);
   }
 
   @ApiBearerAuth()

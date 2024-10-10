@@ -173,4 +173,26 @@ export class UserRepository {
       throw error;
     }
   }
+
+  async findUserByEmailCode(email: string, code: string) {
+    const emailCode = await this.prisma.emailCode.findUnique({
+      where: {
+        email,
+        createdAt: {
+          // 10분 전
+          gte: new Date(Date.now() - 1000 * 60 * 10),
+        },
+        code,
+      },
+      select: {
+        user: {
+          select: { id: true },
+        },
+      },
+    });
+    if (!emailCode) {
+      throw new HttpException('인증 코드가 만료되었습니다.', 401);
+    }
+    return emailCode;
+  }
 }
