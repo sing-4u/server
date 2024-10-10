@@ -129,6 +129,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '이메일 검증에 의한 비밀번호 변경' })
+  @ApiBearerAuth()
   @ApiBody({ type: UpdatePassWordByCodeDto })
   @ApiResponse({ status: 204, description: '성공' })
   @UseGuards(JwtGuard)
