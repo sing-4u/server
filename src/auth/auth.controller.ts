@@ -16,11 +16,16 @@ import {
   ApiBearerAuth,
   ApiHeader,
 } from '@nestjs/swagger';
-import { EmailRegisterDto, EmailLoginDto, SocialLoginDto } from './dto/request';
+import {
+  EmailRegisterDto,
+  EmailLoginDto,
+  SocialLoginDto,
+  GetEmailCodeDto,
+} from './dto/request';
 import { JwtTokenDto } from './dto/response';
 import { AuthService } from './auth.service';
 import { JwtGuard, RefreshGuard } from './guards';
-import { CurrentUser } from 'src/common/pipes/decorators';
+import { CurrentUser } from 'src/common/decorators';
 import { Request } from 'express';
 
 @ApiTags('auth')
@@ -89,6 +94,20 @@ export class AuthController {
     @Body() { provider, providerCode }: SocialLoginDto,
   ): Promise<JwtTokenDto> {
     return await this.authService.socialLogin(provider, providerCode);
+  }
+
+  @ApiOperation({ summary: '이메일 코드 전송' })
+  @ApiBody({ type: GetEmailCodeDto })
+  @ApiResponse({ status: 200, description: '이메일 전송 성공' })
+  @ApiResponse({
+    status: 403,
+    description: '해당 이메일이 있긴있는데 소셜로그인으로 가입한 유저임',
+  })
+  @ApiResponse({ status: 404, description: '해당 이메일로 가입한 유저가 없음' })
+  @Post('get-email-code')
+  @HttpCode(200)
+  async sendEmailCode(@Body() { email }: GetEmailCodeDto) {
+    return await this.authService.sendEmailCode(email);
   }
 
   @ApiBearerAuth()

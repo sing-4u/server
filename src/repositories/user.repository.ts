@@ -40,6 +40,16 @@ export class UserRepository {
     });
   }
 
+  async findOneByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) {
+      throw new HttpException('존재하지 않는 유저입니다', 404);
+    }
+    return user;
+  }
+
   async findOneEmailUser(email: string) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -144,5 +154,23 @@ export class UserRepository {
       data: { image },
     });
     return;
+  }
+
+  async saveEmailCode(email: string, code: string) {
+    try {
+      await this.prisma.emailCode.upsert({
+        where: { email },
+        update: { code, createdAt: new Date() },
+        create: { email, code },
+      });
+      return;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2003') {
+          throw new HttpException('존재하지 않는 이메일입니다.', 404);
+        }
+      }
+      throw error;
+    }
   }
 }

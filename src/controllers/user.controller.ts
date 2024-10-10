@@ -26,7 +26,7 @@ import {
   UpdateImageDto,
 } from './dto/user/request';
 import { ImageDto, UserProfileDto } from './dto/user/response';
-import { CurrentUser } from 'src/common/pipes/decorators';
+import { CurrentUser } from 'src/common/decorators';
 
 @ApiTags('users')
 @ApiBearerAuth()

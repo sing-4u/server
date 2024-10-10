@@ -3,6 +3,7 @@ import { UserRepository } from 'src/repositories/user.repository';
 import * as argon2 from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class AuthService {
@@ -135,6 +136,46 @@ export class AuthService {
       throw new HttpException('Invalid access token', 500);
     }
     return data;
+  }
+
+  async sendEmailCode(email: string) {
+    const user = await this.userRepository.findOneByEmail(email);
+    if (user.provider !== 'EMAIL') {
+      throw new HttpException('이메일로 회원가입 한 유저가 아닙니다', 403);
+    }
+
+    const code = this.generateEmailCode();
+
+    await this.userRepository.saveEmailCode(email, code);
+    await this.sendEmail(email, code);
+    return;
+  }
+
+  generateEmailCode() {
+    const arr = [];
+    for (let i = 0; i < 6; i++) {
+      arr.push(Math.floor(Math.random() * 10));
+    }
+    return arr.join('');
+  }
+
+  async sendEmail(email: string, code: string) {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: this.configService.get('MAIL_USER'),
+        pass: this.configService.get('MAIL_PASS'),
+      },
+    });
+
+    const mailOptions = {
+      from: this.configService.get('MAIL_USER'),
+      to: email,
+      subject: '이메일 코드',
+      text: code,
+    };
+
+    await transporter.sendMail(mailOptions);
   }
 }
 
