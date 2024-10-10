@@ -22,6 +22,7 @@ import {
   SocialLoginDto,
   GetEmailCodeDto,
   VerifyEmailCodeDto,
+  UpdatePassWordByCodeDto,
 } from './dto/request';
 import { JwtTokenDto, AccessTokenDto } from './dto/response';
 import { AuthService } from './auth.service';
@@ -125,6 +126,19 @@ export class AuthController {
     @Body() { email, code }: VerifyEmailCodeDto,
   ): Promise<AccessTokenDto> {
     return await this.authService.verifyEmailCode(email, code);
+  }
+
+  @ApiOperation({ summary: '이메일 검증에 의한 비밀번호 변경' })
+  @ApiBody({ type: UpdatePassWordByCodeDto })
+  @ApiResponse({ status: 204, description: '성공' })
+  @UseGuards(JwtGuard)
+  @Patch('password')
+  @HttpCode(204)
+  async updatePassword(
+    @Body() { newPassword }: UpdatePassWordByCodeDto,
+    @CurrentUser() userId: string,
+  ) {
+    return await this.authService.updatePassword(userId, newPassword);
   }
 
   @ApiBearerAuth()

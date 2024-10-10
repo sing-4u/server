@@ -185,6 +185,12 @@ export class AuthService {
 
     await transporter.sendMail(mailOptions);
   }
+
+  async updatePassword(userId: string, newPassword: string) {
+    const hashedPassword = await argon2.hash(newPassword);
+    await this.userRepository.updatePassword(userId, hashedPassword);
+    return;
+  }
 }
 
 export type GoogleProfile = {
