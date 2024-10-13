@@ -7,6 +7,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Get,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -99,5 +100,13 @@ export class UserController {
   @Get('me')
   async getMe(@CurrentUser() userId: string): Promise<UserProfileDto> {
     return await this.userService.getMyInfo(userId);
+  }
+
+  @ApiOperation({ summary: '회원 탈퇴' })
+  @ApiResponse({ status: 204, description: '성공' })
+  @Delete('me')
+  @HttpCode(204)
+  async deleteUser(@CurrentUser() userId: string) {
+    await this.userService.deleteUser(userId);
   }
 }

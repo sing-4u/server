@@ -27,5 +27,5 @@ model EmailCode {
   code      String
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [email], references: [email])
+  user User @relation(fields: [email], references: [email], onDelete: Cascade)
 }

@@ -84,4 +84,13 @@ export class UserService {
     }
     return user;
   }
+
+  async deleteUser(userId: string) {
+    const user = await this.userRepository.findOneById(userId);
+    if (user.image) {
+      await this.awsService.deleteProfileImage(user.image);
+    }
+    await this.userRepository.deleteOne(userId);
+    return;
+  }
 }
