@@ -58,9 +58,9 @@ export class UserController {
   @HttpCode(204)
   async updateEmail(
     @CurrentUser() userId: string,
-    @Body() { email, password }: UpdateEmailDto,
+    @Body() updateEmailDto: UpdateEmailDto,
   ) {
-    await this.userService.updateEmail(userId, { email, password });
+    await this.userService.updateEmail(userId, updateEmailDto);
   }
 
   @ApiOperation({ summary: '비밀번호 변경' })

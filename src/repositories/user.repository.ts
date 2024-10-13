@@ -127,6 +127,13 @@ export class UserRepository {
     return user.password!;
   }
 
+  async findOneWithPasswordById(userId: string) {
+    return await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { password: true },
+    });
+  }
+
   async updatePassword(userId: string, password: string) {
     await this.prisma.user.update({
       where: { id: userId },

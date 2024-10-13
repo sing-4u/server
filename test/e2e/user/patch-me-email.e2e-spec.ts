@@ -4,10 +4,12 @@ import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { register } from '../helpers';
+import { AuthService } from 'src/auth/auth.service';
 
 describe('PATCH /users/me/email - 이메일 변경', () => {
   let app: INestApplication;
   let prisma: PrismaService;
+  let authService: AuthService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,6 +18,7 @@ describe('PATCH /users/me/email - 이메일 변경', () => {
 
     app = module.createNestApplication();
     prisma = module.get<PrismaService>(PrismaService);
+    authService = module.get<AuthService>(AuthService);
     await app.init();
   });
 
@@ -89,5 +92,33 @@ describe('PATCH /users/me/email - 이메일 변경', () => {
     expect(status).toBe(204);
     const user = await prisma.user.findFirst();
     expect(user?.email).toBe('test2@test.com');
+  });
+
+  it('소셜 로그인 사용자는 password 없이 이메일을 변경한다', async () => {
+    // given
+    jest
+      .spyOn(authService, 'getGoogleAccessToken')
+      .mockResolvedValue('testAccessToken');
+    jest.spyOn(authService, 'getGoogleProfile').mockResolvedValue({
+      email: 'test@test.com',
+      id: 'testId',
+      verified_email: true,
+      picture: 'testPicture',
+    });
+    const { body } = await request(app.getHttpServer())
+      .post('/auth/login/social')
+      .send({
+        provider: 'GOOGLE',
+        providerCode: 'testCode',
+      });
+
+    // when
+    const { status } = await request(app.getHttpServer())
+      .patch('/users/me/email')
+      .set('Authorization', `Bearer ${body.accessToken}`)
+      .send({ email: 'test2@test.com' });
+
+    // then
+    expect(status).toBe(204);
   });
 });
