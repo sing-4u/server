@@ -8,16 +8,19 @@ datasource db {
 }
 
 model User {
-  id           String      @id @default(uuid())
+  id           String   @id @default(uuid())
   provider     String
   providerId   String?
   password     String?
-  email        String      @unique
+  email        String   @unique
   name         String
   refreshToken String?
-  createdAt    DateTime    @default(now())
+  createdAt    DateTime @default(now())
   image        String?
-  EmailCode    EmailCode[]
+  status       String   @default("CLOSED")
+
+  EmailCode EmailCode[]
+  SongList  SongList[]
 
   @@unique([provider, providerId])
 }
@@ -28,4 +31,25 @@ model EmailCode {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [email], references: [email], onDelete: Cascade)
+}
+
+model SongList {
+  id        String    @id @default(uuid())
+  startDate DateTime  @default(now()) @db.Date
+  endDate   DateTime? @db.Date
+  userId    String
+
+  user User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Song Song[]
+}
+
+model Song {
+  email      String
+  artist     String
+  title      String
+  songListId String
+
+  songList SongList @relation(fields: [songListId], references: [id], onDelete: Cascade)
+
+  @@id([email, artist, title])
 }
