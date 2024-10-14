@@ -9,9 +9,11 @@ import {
 import { JwtGuard } from 'src/auth/guards';
 import { CurrentUser } from 'src/common/decorators';
 import { SongService } from 'src/providers/song.service';
-import { CloseDto } from './dto/song/request';
+import { CloseDto, RequestSongDto } from './dto/song/request';
 
 @ApiTags('songs')
+@ApiResponse({ status: 400, description: '유효성 검사 실패' })
+@ApiResponse({ status: 401, description: '인증 실패' })
 @Controller('songs')
 export class SongController {
   constructor(private songService: SongService) {}
@@ -37,6 +39,17 @@ export class SongController {
   @HttpCode(204)
   async close(@CurrentUser() userId: string, @Body() { songListId }: CloseDto) {
     await this.songService.close(userId, songListId);
+    return;
+  }
+
+  @ApiOperation({ summary: '곡 신청' })
+  @ApiBody({ type: RequestSongDto })
+  @ApiResponse({ status: 201, description: '곡 신청 성공' })
+  @ApiResponse({ status: 404, description: 'OPENED 상태가 아님' })
+  @ApiResponse({ status: 409, description: '이미 신청한 곡' })
+  @Post()
+  async requestSong(@Body() requestSongDto: RequestSongDto) {
+    await this.songService.requestSong(requestSongDto);
     return;
   }
 }

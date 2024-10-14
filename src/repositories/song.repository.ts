@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class SongRepository {
@@ -43,5 +44,38 @@ export class SongRepository {
       }),
     ]);
     return;
+  }
+
+  async findOneRecentSongList(userId: string) {
+    return await this.prisma.songList.findFirst({
+      where: { userId, endDate: null },
+      orderBy: { startDate: 'desc' },
+    });
+  }
+
+  async createSong(requestSongInput: {
+    songListId: string;
+    email: string;
+    artist: string;
+    title: string;
+  }) {
+    try {
+      await this.prisma.song.create({
+        data: {
+          songListId: requestSongInput.songListId,
+          email: requestSongInput.email,
+          artist: requestSongInput.artist,
+          title: requestSongInput.title,
+        },
+      });
+      return;
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2002'
+      ) {
+        throw new HttpException('이미 신청한 곡입니다.', 409);
+      }
+    }
   }
 }

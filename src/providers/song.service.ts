@@ -18,4 +18,27 @@ export class SongService {
     await this.songRepository.close(userId, songListId);
     return;
   }
+
+  async requestSong(requestSongInput: {
+    userId: string;
+    email: string;
+    artist: string;
+    title: string;
+  }) {
+    const recentSongList = await this.songRepository.findOneRecentSongList(
+      requestSongInput.userId,
+    );
+
+    if (!recentSongList) {
+      throw new HttpException('열려있는 신청곡이 없습니다.', 404);
+    }
+
+    await this.songRepository.createSong({
+      songListId: recentSongList.id,
+      email: requestSongInput.email,
+      artist: requestSongInput.artist,
+      title: requestSongInput.title,
+    });
+    return;
+  }
 }
