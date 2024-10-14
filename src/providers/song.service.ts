@@ -13,4 +13,9 @@ export class SongService {
     await this.songRepository.open(userId);
     return;
   }
+
+  async close(userId: string, songListId: string) {
+    await this.songRepository.close(userId, songListId);
+    return;
+  }
 }
