@@ -1,22 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserProfileDto {
+export class GetUsersResponseDto {
   @ApiProperty()
   id: string;
 
   @ApiProperty()
   name: string;
 
-  @ApiProperty()
-  email: string;
-
   @ApiProperty({
+    example: 'https://example.com/image.png',
     nullable: true,
     type: 'string',
-    example: 'https://example.com/image.png',
   })
   image: string | null;
 
-  @ApiProperty({ enum: ['EMAIL', 'GOOGLE'] })
-  provider: string;
+  @ApiProperty({ enum: ['OPENED', 'CLOSED'] })
+  status: string;
 }

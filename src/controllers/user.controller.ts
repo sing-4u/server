@@ -8,6 +8,7 @@ import {
   UploadedFile,
   Get,
   Delete,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,6 +17,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiConsumes,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -25,23 +27,28 @@ import {
   UpdateEmailDto,
   UpdatePasswordDto,
   UpdateImageDto,
+  GetUserListDto,
 } from './dto/user/request';
-import { ImageDto, UserProfileDto } from './dto/user/response';
+import {
+  ImageDto,
+  UserProfileDto,
+  GetUsersResponseDto,
+} from './dto/user/response';
 import { CurrentUser } from 'src/common/decorators';
 
 @ApiTags('users')
-@ApiBearerAuth()
 @ApiResponse({ status: 400, description: '유효성 검사 실패' })
 @ApiResponse({ status: 401, description: '인증 실패' })
 @Controller('users')
-@UseGuards(JwtGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 
   @ApiOperation({ summary: '이름 변경' })
+  @ApiBearerAuth()
   @ApiBody({ type: UpdateUserNameDto })
   @ApiResponse({ status: 204, description: '성공' })
   @Patch('me/name')
+  @UseGuards(JwtGuard)
   @HttpCode(204)
   async updateName(
     @CurrentUser() userId: string,
@@ -51,11 +58,13 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '이메일 변경' })
+  @ApiBearerAuth()
   @ApiBody({ type: UpdateEmailDto })
   @ApiResponse({ status: 204, description: '성공' })
   @ApiResponse({ status: 401, description: '비밀번호가 틀림' })
   @ApiResponse({ status: 409, description: '이미 사용중인 이메일' })
   @Patch('me/email')
+  @UseGuards(JwtGuard)
   @HttpCode(204)
   async updateEmail(
     @CurrentUser() userId: string,
@@ -65,10 +74,12 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '비밀번호 변경' })
+  @ApiBearerAuth()
   @ApiBody({ type: UpdatePasswordDto })
   @ApiResponse({ status: 204, description: '성공' })
   @ApiResponse({ status: 401, description: '비밀번호가 틀림' })
   @Patch('me/password')
+  @UseGuards(JwtGuard)
   @HttpCode(204)
   async updatePassword(
     @CurrentUser() userId: string,
@@ -82,10 +93,12 @@ export class UserController {
     description:
       '이미지 파일은 multipart/formdata 형식이며 이미지 파일이 없거나 null인 경우 이미지 삭제로 간주합니다',
   })
+  @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateImageDto })
   @ApiResponse({ status: 201, description: '성공', type: ImageDto })
   @Patch('me/image')
+  @UseGuards(JwtGuard)
   @HttpCode(201)
   @UseInterceptors(FileInterceptor('image'))
   async updateProfileImage(
@@ -96,17 +109,51 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '내 정보 조회' })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: '성공', type: UserProfileDto })
   @Get('me')
+  @UseGuards(JwtGuard)
   async getMe(@CurrentUser() userId: string): Promise<UserProfileDto> {
     return await this.userService.getMyInfo(userId);
   }
 
   @ApiOperation({ summary: '회원 탈퇴' })
+  @ApiBearerAuth()
   @ApiResponse({ status: 204, description: '성공' })
   @Delete('me')
+  @UseGuards(JwtGuard)
   @HttpCode(204)
   async deleteUser(@CurrentUser() userId: string) {
     await this.userService.deleteUser(userId);
+  }
+
+  @ApiOperation({ summary: '유저 리스트 조회' })
+  @ApiQuery({ name: 'name', required: false })
+  @ApiQuery({
+    name: 'index',
+    required: true,
+    type: Number,
+    description: '0부터 시작입니다',
+  })
+  @ApiQuery({ name: 'size', required: true, type: Number })
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: GetUsersResponseDto,
+    isArray: true,
+  })
+  @Get()
+  async getUsers(
+    @Query() query: GetUserListDto,
+  ): Promise<GetUsersResponseDto[]> {
+    if (query.name) {
+      return await this.userService.getAllByName({
+        index: query.index,
+        size: query.size,
+        name: query.name,
+      });
+    } else {
+      return await this.userService.getAll(query);
+    }
   }
 }

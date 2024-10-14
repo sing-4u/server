@@ -93,4 +93,34 @@ export class UserService {
     await this.userRepository.deleteOne(userId);
     return;
   }
+
+  async getAll(query: { index: number; size: number }) {
+    let users = await this.userRepository.findAll(query);
+    users = users.map((user) => {
+      if (user.image) {
+        return {
+          ...user,
+          image: this.awsService.getProfileImageUrl(user.image),
+        };
+      }
+      return user;
+    });
+
+    return users;
+  }
+
+  async getAllByName(query: { index: number; size: number; name: string }) {
+    let users = await this.userRepository.findAllByName(query);
+    users = users.map((user) => {
+      if (user.image) {
+        return {
+          ...user,
+          image: this.awsService.getProfileImageUrl(user.image),
+        };
+      }
+      return user;
+    });
+
+    return users;
+  }
 }

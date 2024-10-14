@@ -209,4 +209,49 @@ export class UserRepository {
     });
     return;
   }
+
+  async findAll({ index, size }: { index: number; size: number }) {
+    return await this.prisma.user.findMany({
+      skip: index * size,
+      take: size,
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        status: true,
+      },
+      orderBy: {
+        status: 'desc',
+      },
+    });
+  }
+
+  async findAllByName({
+    index,
+    size,
+    name,
+  }: {
+    index: number;
+    size: number;
+    name: string;
+  }) {
+    return await this.prisma.user.findMany({
+      skip: index * size,
+      take: size,
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        status: true,
+      },
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+      orderBy: {
+        status: 'desc',
+      },
+    });
+  }
 }
