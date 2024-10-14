@@ -187,8 +187,8 @@ export class UserRepository {
       where: {
         email,
         createdAt: {
-          // 10분 전
-          gte: new Date(Date.now() - 1000 * 60 * 10),
+          // 3분 전
+          gte: new Date(Date.now() - 1000 * 60 * 3),
         },
         code,
       },
