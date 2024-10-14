@@ -41,4 +41,8 @@ export class SongService {
     });
     return;
   }
+
+  async getSongList(userId: string) {
+    return await this.songRepository.findManySongList(userId);
+  }
 }

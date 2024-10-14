@@ -35,12 +35,12 @@ model EmailCode {
 
 model SongList {
   id        String    @id @default(uuid())
-  startDate DateTime  @default(now()) @db.Date
-  endDate   DateTime? @db.Date
+  startDate DateTime  @default(now())
+  endDate   DateTime?
   userId    String
 
-  user User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Song Song[]
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  songs Song[]
 }
 
 model Song {
