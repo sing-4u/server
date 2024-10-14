@@ -150,6 +150,7 @@ export class UserRepository {
         email: true,
         name: true,
         image: true,
+        status: true,
         provider: true,
       },
     });
