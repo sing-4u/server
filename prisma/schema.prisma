@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String   @id @default(uuid()) @db.Uuid
   provider     String
   providerId   String?
   password     String?
@@ -17,7 +17,7 @@ model User {
   refreshToken String?
   createdAt    DateTime @default(now())
   image        String?
-  status       String   @default("CLOSED")
+  isOpened     Boolean  @default(false)
 
   EmailCode EmailCode[]
   SongList  SongList[]
@@ -34,10 +34,10 @@ model EmailCode {
 }
 
 model SongList {
-  id        String    @id @default(uuid())
+  id        String    @id @default(uuid()) @db.Uuid
   startDate DateTime  @default(now())
   endDate   DateTime?
-  userId    String
+  userId    String    @db.Uuid
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   songs Song[]
@@ -47,7 +47,7 @@ model Song {
   email      String
   artist     String
   title      String
-  songListId String
+  songListId String @db.Uuid
 
   songList SongList @relation(fields: [songListId], references: [id], onDelete: Cascade)
 

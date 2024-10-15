@@ -64,25 +64,25 @@ describe('GET /users - 사용자 목록 조회', () => {
           provider: 'EMAIL',
           email: 'test@test.com',
           name: 'test1',
-          status: 'CLOSED',
+          isOpened: false,
         },
         {
           provider: 'EMAIL',
           email: 'test2@test.com',
           name: 'test2',
-          status: 'OPENED',
+          isOpened: true,
         },
         {
           provider: 'EMAIL',
           email: 'test3@test.com',
           name: 'test3',
-          status: 'CLOSED',
+          isOpened: false,
         },
         {
           provider: 'EMAIL',
           email: 'test4@test.com',
           name: 'test4',
-          status: 'OPENED',
+          isOpened: true,
         },
       ],
     });
@@ -101,25 +101,25 @@ describe('GET /users - 사용자 목록 조회', () => {
       {
         id: expect.any(String),
         name: expect.any(String),
-        status: 'OPENED',
+        isOpened: true,
         image: null,
       },
       {
         id: expect.any(String),
         name: expect.any(String),
-        status: 'OPENED',
+        isOpened: true,
         image: null,
       },
       {
         id: expect.any(String),
         name: expect.any(String),
-        status: 'CLOSED',
+        isOpened: false,
         image: null,
       },
       {
         id: expect.any(String),
         name: expect.any(String),
-        status: 'CLOSED',
+        isOpened: false,
         image: null,
       },
     ]);
@@ -132,7 +132,7 @@ describe('GET /users - 사용자 목록 조회', () => {
         provider: 'EMAIL',
         email: `test${i}@test.com`,
         name: `test${i}`,
-        status: 'CLOSED',
+        isOpened: false,
       })),
     });
 

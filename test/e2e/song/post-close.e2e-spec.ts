@@ -44,7 +44,7 @@ describe('POST /songs/close - 신청곡 닫기', () => {
       prisma.songList.create({ data: { userId: user!.id } }),
       prisma.user.update({
         where: { id: user!.id },
-        data: { status: 'OPENED' },
+        data: { isOpened: true },
       }),
     ]);
 
@@ -60,7 +60,7 @@ describe('POST /songs/close - 신청곡 닫기', () => {
       prisma.user.findFirst(),
       prisma.songList.findFirst(),
     ]);
-    expect(updatedUser!.status).toBe('CLOSED');
+    expect(updatedUser!.isOpened).toBe(false);
     expect(updatedSongList!.endDate).not.toBeNull();
   });
 });

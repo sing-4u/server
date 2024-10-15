@@ -27,7 +27,7 @@ describe('POST /songs/open - 신청곡 열기', () => {
     // given
     const accessToken = await register(app, {});
     await prisma.user.updateMany({
-      data: { status: 'OPENED' },
+      data: { isOpened: true },
     });
 
     // when
@@ -54,7 +54,7 @@ describe('POST /songs/open - 신청곡 열기', () => {
       prisma.user.findFirst(),
       prisma.songList.findFirst(),
     ]);
-    expect(user!.status).toBe('OPENED');
+    expect(user!.isOpened).toBe(true);
     expect(songList).not.toBeNull();
   });
 });

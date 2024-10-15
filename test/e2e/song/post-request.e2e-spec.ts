@@ -75,7 +75,7 @@ describe('POST /songs - 곡 신청', () => {
         provider: 'EMAIL',
         email: 'test@test.com',
         name: 'testUser',
-        status: 'CLOSED',
+        isOpened: false,
       },
     });
 
@@ -98,7 +98,7 @@ describe('POST /songs - 곡 신청', () => {
         provider: 'EMAIL',
         email: 'test@test.com',
         name: 'testUser',
-        status: 'OPENED',
+        isOpened: true,
       },
     });
 
@@ -129,7 +129,7 @@ describe('POST /songs - 곡 신청', () => {
         provider: 'EMAIL',
         email: 'test@test.com',
         name: 'testUser',
-        status: 'OPENED',
+        isOpened: true,
       },
     });
 

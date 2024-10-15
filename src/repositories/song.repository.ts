@@ -9,9 +9,9 @@ export class SongRepository {
   async canOpen(userId: string) {
     const user = await this.prisma.user.findUniqueOrThrow({
       where: { id: userId },
-      select: { status: true },
+      select: { isOpened: true },
     });
-    if (user.status === 'CLOSED') {
+    if (user.isOpened === false) {
       return true;
     }
     return false;
@@ -26,7 +26,7 @@ export class SongRepository {
       }),
       this.prisma.user.update({
         where: { id: userId },
-        data: { status: 'OPENED' },
+        data: { isOpened: true },
       }),
     ]);
     return;
@@ -40,7 +40,7 @@ export class SongRepository {
       }),
       this.prisma.user.update({
         where: { id: userId },
-        data: { status: 'CLOSED' },
+        data: { isOpened: false },
       }),
     ]);
     return;

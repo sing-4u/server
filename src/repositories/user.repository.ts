@@ -150,7 +150,7 @@ export class UserRepository {
         email: true,
         name: true,
         image: true,
-        status: true,
+        isOpened: true,
         provider: true,
       },
     });
@@ -219,10 +219,10 @@ export class UserRepository {
         id: true,
         name: true,
         image: true,
-        status: true,
+        isOpened: true,
       },
       orderBy: {
-        status: 'desc',
+        isOpened: 'desc',
       },
     });
   }
@@ -243,7 +243,7 @@ export class UserRepository {
         id: true,
         name: true,
         image: true,
-        status: true,
+        isOpened: true,
       },
       where: {
         name: {
@@ -251,7 +251,7 @@ export class UserRepository {
         },
       },
       orderBy: {
-        status: 'desc',
+        isOpened: 'desc',
       },
     });
   }

@@ -14,6 +14,6 @@ export class GetUsersResponseDto {
   })
   image: string | null;
 
-  @ApiProperty({ enum: ['OPENED', 'CLOSED'] })
-  status: string;
+  @ApiProperty()
+  isOpened: boolean;
 }

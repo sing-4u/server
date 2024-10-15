@@ -39,7 +39,7 @@ describe('GET /users/me - 내 정보 조회', () => {
       email: expect.any(String),
       name: expect.any(String),
       image: null,
-      status: 'CLOSED',
+      isOpened: false,
       provider: 'EMAIL',
     });
   });
@@ -65,7 +65,7 @@ describe('GET /users/me - 내 정보 조회', () => {
       email: expect.any(String),
       name: expect.any(String),
       image: expect.stringContaining('image.png'),
-      status: 'CLOSED',
+      isOpened: false,
       provider: 'EMAIL',
     });
   });

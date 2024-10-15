@@ -17,8 +17,8 @@ export class UserProfileDto {
   })
   image: string | null;
 
-  @ApiProperty({ enum: ['OPENED', 'CLOSED'] })
-  status: string;
+  @ApiProperty()
+  isOpened: boolean;
 
   @ApiProperty({ enum: ['EMAIL', 'GOOGLE'] })
   provider: string;
