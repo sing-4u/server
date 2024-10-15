@@ -23,6 +23,7 @@ model User {
   SongList  SongList[]
 
   @@unique([provider, providerId])
+  @@index([provider, providerId])
   @@index([isOpened])
 }
 
