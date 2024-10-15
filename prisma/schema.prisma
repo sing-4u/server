@@ -23,6 +23,7 @@ model User {
   SongList  SongList[]
 
   @@unique([provider, providerId])
+  @@index([isOpened])
 }
 
 model EmailCode {
@@ -41,6 +42,8 @@ model SongList {
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   songs Song[]
+
+  @@index([userId])
 }
 
 model Song {
@@ -52,4 +55,5 @@ model Song {
   songList SongList @relation(fields: [songListId], references: [id], onDelete: Cascade)
 
   @@id([email, artist, title])
+  @@index([songListId])
 }
