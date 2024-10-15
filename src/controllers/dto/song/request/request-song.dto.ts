@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsString, IsNotEmpty, IsEmail } from 'class-validator';
+import { IsUUID, IsString, IsEmail, Length } from 'class-validator';
 
 export class RequestSongDto {
   @ApiProperty({ description: '신청받는 유저의 ID' })
@@ -12,11 +12,11 @@ export class RequestSongDto {
 
   @ApiProperty({ description: '가수 이름' })
   @IsString()
-  @IsNotEmpty()
+  @Length(1, 50)
   artist: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @Length(1, 50)
   title: string;
 }
