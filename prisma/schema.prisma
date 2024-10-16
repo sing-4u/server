@@ -55,6 +55,5 @@ model Song {
 
   songList SongList @relation(fields: [songListId], references: [id], onDelete: Cascade)
 
-  @@id([email, artist, title])
-  @@index([songListId])
+  @@id([songListId, email, artist, title])
 }
