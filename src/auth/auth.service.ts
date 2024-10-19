@@ -4,6 +4,7 @@ import * as argon2 from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as nodemailer from 'nodemailer';
+import { createHtml } from './create-html';
 
 @Injectable()
 export class AuthService {
@@ -180,7 +181,7 @@ export class AuthService {
       from: this.configService.get('MAIL_USER'),
       to: email,
       subject: '이메일 코드',
-      text: code,
+      html: createHtml(code),
     };
 
     await transporter.sendMail(mailOptions);
