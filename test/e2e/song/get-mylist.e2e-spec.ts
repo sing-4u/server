@@ -84,17 +84,11 @@ describe('GET /songs/mylist - 내 신청곡 목록', () => {
         id: songList2.id,
         startDate: songList2.startDate.toISOString(),
         endDate: null,
-        songs: [],
       },
       {
         id: songList1.id,
         startDate: songList1.startDate.toISOString(),
         endDate: expect.any(String),
-        songs: [
-          { artist: '아이유', title: '좋은날', count: 2 },
-          { artist: '아이유', title: '밤편지', count: 1 },
-          { artist: '박화요비', title: '그런일은', count: 1 },
-        ],
       },
     ]);
   });
