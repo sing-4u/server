@@ -5,6 +5,8 @@ import {
   HttpCode,
   Body,
   Get,
+  Param,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,7 +19,7 @@ import { JwtGuard } from 'src/auth/guards';
 import { CurrentUser } from 'src/common/decorators';
 import { SongService } from 'src/providers/song.service';
 import { CloseDto, RequestSongDto } from './dto/song/request';
-import { SongListResponseDto } from './dto/song/response';
+import { SongListResponseDto, SongListDetailDto } from './dto/song/response';
 
 @ApiTags('songs')
 @ApiResponse({ status: 400, description: '유효성 검사 실패' })
@@ -61,7 +63,7 @@ export class SongController {
     return;
   }
 
-  @ApiOperation({ summary: '내 songList 조회' })
+  @ApiOperation({ summary: '내 songList 전체 조회' })
   @ApiBearerAuth()
   @ApiResponse({ status: 200, type: SongListResponseDto, isArray: true })
   @Get('mylist')
@@ -70,5 +72,14 @@ export class SongController {
     @CurrentUser() userId: string,
   ): Promise<SongListResponseDto[]> {
     return await this.songService.getSongList(userId);
+  }
+
+  @ApiOperation({ summary: 'songList 상세 조회' })
+  @ApiResponse({ status: 200, type: SongListDetailDto, isArray: true })
+  @Get('mylist/:songListId')
+  async getMyListDetail(
+    @Param('songListId', new ParseUUIDPipe()) songListId: string,
+  ): Promise<SongListDetailDto[]> {
+    return await this.songService.getSongListDetail(songListId);
   }
 }

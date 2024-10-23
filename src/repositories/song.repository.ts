@@ -93,24 +93,21 @@ export class SongRepository {
         endDate: true,
       },
     });
-    // for (const songList of songLists) {
-    //   const songs = await this.prisma.song.groupBy({
-    //     by: ['artist', 'title'],
-    //     _count: true,
-    //     where: { songListId: songList.id },
-    //     orderBy: { _count: { title: 'desc' } },
-    //   });
-    //   finalSongLists.push({
-    //     ...songList,
-    //     songs: songs.map((song) => {
-    //       return {
-    //         artist: song.artist,
-    //         title: song.title,
-    //         count: song._count,
-    //       };
-    //     }),
-    //   });
-    // }
-    // return finalSongLists;
+  }
+
+  async findSongListDetail(songListId: string) {
+    const songs = await this.prisma.song.groupBy({
+      by: ['artist', 'title'],
+      _count: true,
+      where: { songListId },
+      orderBy: { _count: { title: 'desc' } },
+    });
+    return songs.map((song) => {
+      return {
+        artist: song.artist,
+        title: song.title,
+        count: song._count,
+      };
+    });
   }
 }

@@ -45,4 +45,8 @@ export class SongService {
   async getSongList(userId: string) {
     return await this.songRepository.findManySongList(userId);
   }
+
+  async getSongListDetail(songListId: string) {
+    return await this.songRepository.findSongListDetail(songListId);
+  }
 }
