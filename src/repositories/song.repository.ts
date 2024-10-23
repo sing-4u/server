@@ -33,16 +33,20 @@ export class SongRepository {
   }
 
   async close(userId: string, songListId: string) {
-    await this.prisma.$transaction([
+    const [result] = await this.prisma.$transaction([
       this.prisma.songList.update({
         where: { id: songListId, userId, endDate: null },
         data: { endDate: new Date() },
+        select: { songs: true },
       }),
       this.prisma.user.update({
         where: { id: userId },
         data: { isOpened: false },
       }),
     ]);
+    if (result.songs.length === 0) {
+      await this.prisma.songList.delete({ where: { id: songListId } });
+    }
     return;
   }
 
