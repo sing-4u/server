@@ -123,4 +123,15 @@ export class UserService {
 
     return users;
   }
+
+  async getForm(userId: string) {
+    const user = await this.userRepository.findOneById(userId);
+
+    return {
+      id: user.id,
+      name: user.name,
+      image: user.image ? this.awsService.getProfileImageUrl(user.image) : null,
+      isOpened: user.isOpened,
+    };
+  }
 }

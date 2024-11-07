@@ -143,7 +143,7 @@ export class UserRepository {
   }
 
   async findOneById(id: string) {
-    return await this.prisma.user.findUniqueOrThrow({
+    const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
         id: true,
@@ -154,6 +154,10 @@ export class UserRepository {
         provider: true,
       },
     });
+    if (!user) {
+      throw new HttpException('존재하지 않는 유저입니다', 404);
+    }
+    return user;
   }
 
   async updateProfileImage(userId: string, image: string | null) {
