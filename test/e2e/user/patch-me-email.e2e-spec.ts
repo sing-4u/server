@@ -96,9 +96,6 @@ describe('PATCH /users/me/email - 이메일 변경', () => {
 
   it('소셜 로그인 사용자는 password 없이 이메일을 변경한다', async () => {
     // given
-    jest
-      .spyOn(authService, 'getGoogleAccessToken')
-      .mockResolvedValue('testAccessToken');
     jest.spyOn(authService, 'getGoogleProfile').mockResolvedValue({
       email: 'test@test.com',
       id: 'testId',
@@ -109,7 +106,7 @@ describe('PATCH /users/me/email - 이메일 변경', () => {
       .post('/auth/login/social')
       .send({
         provider: 'GOOGLE',
-        providerCode: 'testCode',
+        providerAccessToken: 'testToken',
       });
 
     // when

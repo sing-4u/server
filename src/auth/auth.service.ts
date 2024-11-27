@@ -81,9 +81,8 @@ export class AuthService {
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
-  async socialLogin(provider: 'GOOGLE', providerCode: string) {
-    const googleAccessToken = await this.getGoogleAccessToken(providerCode);
-    const profile = await this.getGoogleProfile(googleAccessToken);
+  async socialLogin(provider: 'GOOGLE', providerAccessToken: string) {
+    const profile = await this.getGoogleProfile(providerAccessToken);
 
     let user = await this.userRepository.findOneByProvider(
       provider,
@@ -105,27 +104,6 @@ export class AuthService {
     await this.userRepository.saveRefreshToken(user.id, refreshToken);
 
     return { accessToken, refreshToken };
-  }
-
-  async getGoogleAccessToken(code: string) {
-    const response = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        code,
-        client_id: this.configService.get('GOOGLE_CLIENT_ID'),
-        client_secret: this.configService.get('GOOGLE_CLIENT_SECRET'),
-        redirect_uri: this.configService.get('GOOGLE_REDIRECT_URI'),
-        grant_type: 'authorization_code',
-      }),
-    });
-    const data = await response.json();
-    if (!data.access_token) {
-      throw new HttpException('Invalid code', 400);
-    }
-    return data.access_token;
   }
 
   async getGoogleProfile(accessToken: string) {

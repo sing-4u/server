@@ -93,9 +93,9 @@ export class AuthController {
   @Post('login/social')
   @HttpCode(200)
   async socialLogin(
-    @Body() { provider, providerCode }: SocialLoginDto,
+    @Body() { provider, providerAccessToken }: SocialLoginDto,
   ): Promise<JwtTokenDto> {
-    return await this.authService.socialLogin(provider, providerCode);
+    return await this.authService.socialLogin(provider, providerAccessToken);
   }
 
   @ApiOperation({ summary: '이메일 코드 전송' })

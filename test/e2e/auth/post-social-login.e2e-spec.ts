@@ -53,9 +53,6 @@ describe('POST /login/social - 소셜 로그인', () => {
 
   it('없는 회원인 경우 새로운 회원을 생성하고 200과 함께 토큰을 반환한다', async () => {
     // given
-    const spy1 = jest
-      .spyOn(authService, 'getGoogleAccessToken')
-      .mockResolvedValue('testAccessToken');
     const spy2 = jest.spyOn(authService, 'getGoogleProfile').mockResolvedValue({
       email: 'test@test.com',
       id: 'testId',
@@ -67,7 +64,7 @@ describe('POST /login/social - 소셜 로그인', () => {
       .post('/auth/login/social')
       .send({
         provider: 'GOOGLE',
-        providerCode: 'testCode',
+        providerAccessToken: 'testToken',
       });
 
     // then
@@ -76,15 +73,11 @@ describe('POST /login/social - 소셜 로그인', () => {
     expect(body.refreshToken).toBeDefined();
 
     // cleanup
-    spy1.mockRestore();
     spy2.mockRestore();
   });
 
   it('이미 가입된 회원인 경우 200과 함께 토큰을 반환한다', async () => {
     // given
-    const spy1 = jest
-      .spyOn(authService, 'getGoogleAccessToken')
-      .mockResolvedValue('testAccessToken');
     const spy2 = jest.spyOn(authService, 'getGoogleProfile').mockResolvedValue({
       email: 'test@test.com',
       id: 'testId',
@@ -94,7 +87,7 @@ describe('POST /login/social - 소셜 로그인', () => {
 
     await request(app.getHttpServer()).post('/auth/login/social').send({
       provider: 'GOOGLE',
-      providerCode: 'testCode',
+      providerAccessToken: 'testToken',
     });
 
     // when
@@ -102,7 +95,7 @@ describe('POST /login/social - 소셜 로그인', () => {
       .post('/auth/login/social')
       .send({
         provider: 'GOOGLE',
-        providerCode: 'testCode',
+        providerAccessToken: 'testToken',
       });
 
     // then
@@ -111,15 +104,11 @@ describe('POST /login/social - 소셜 로그인', () => {
     expect(body.refreshToken).toBeDefined();
 
     // cleanup
-    spy1.mockRestore();
     spy2.mockRestore();
   });
 
   it('해당 소셜 로그인으로 가입한 건 아니지만 동일한 이메일이 이미 있는 경우 409 에러를 반환한다', async () => {
     // given
-    const spy1 = jest
-      .spyOn(authService, 'getGoogleAccessToken')
-      .mockResolvedValue('testAccessToken');
     const spy2 = jest.spyOn(authService, 'getGoogleProfile').mockResolvedValue({
       email: 'test@test.com',
       id: 'testId',
@@ -140,14 +129,13 @@ describe('POST /login/social - 소셜 로그인', () => {
       .post('/auth/login/social')
       .send({
         provider: 'GOOGLE',
-        providerCode: 'testCode',
+        providerAccessToken: 'testToken',
       });
 
     // then
     expect(status).toBe(409);
 
     // cleanup
-    spy1.mockRestore();
     spy2.mockRestore();
   });
 });

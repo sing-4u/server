@@ -8,8 +8,8 @@ export class SocialLoginDto {
   @IsEnum(['GOOGLE'])
   provider: 'GOOGLE';
 
-  @ApiProperty({ description: '소셜 로그인 코드' })
+  @ApiProperty({ description: '소셜 로그인 액세스 토큰' })
   @IsString()
   @IsNotEmpty()
-  providerCode: string;
+  providerAccessToken: string;
 }
