@@ -152,8 +152,8 @@ describe('POST /songs - 곡 신청', () => {
     const { status } = await request(app.getHttpServer()).post('/songs').send({
       userId: user.id,
       email: 'example@example.com',
-      artist: '아티스트',
-      title: '제목',
+      artist: '아티스트2',
+      title: '제목2',
     });
 
     // then

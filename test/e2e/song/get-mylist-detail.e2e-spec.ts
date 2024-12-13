@@ -41,6 +41,25 @@ describe('GET /songs/mylist/:songListId - 신청곡 목록 상세 조회', () =>
         provider: 'EMAIL',
       },
     });
+    await prisma.user.createMany({
+      data: [
+        {
+          email: 'test2@test.com',
+          name: 'test2',
+          provider: 'EMAIL',
+        },
+        {
+          email: 'test3@test.com',
+          name: 'test3',
+          provider: 'EMAIL',
+        },
+        {
+          email: 'test4@test.com',
+          name: 'test4',
+          provider: 'EMAIL',
+        },
+      ],
+    });
     const songList = await prisma.songList.create({
       data: {
         userId: user.id,
@@ -58,19 +77,19 @@ describe('GET /songs/mylist/:songListId - 신청곡 목록 상세 조회', () =>
           songListId: songList.id,
           artist: '박화요비',
           title: '그런일은',
-          email: 'test@test.com',
-        },
-        {
-          songListId: songList.id,
-          artist: '아이유',
-          title: '좋은날',
-          email: 'test@test.com',
-        },
-        {
-          songListId: songList.id,
-          artist: '아이유',
-          title: '좋은날',
           email: 'test2@test.com',
+        },
+        {
+          songListId: songList.id,
+          artist: '아이유',
+          title: '좋은날',
+          email: 'test3@test.com',
+        },
+        {
+          songListId: songList.id,
+          artist: '아이유',
+          title: '좋은날',
+          email: 'test4@test.com',
         },
       ],
     });
