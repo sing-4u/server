@@ -1,6 +1,7 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import { JsonException } from 'src/common/exception';
 
 @Injectable()
 export class SongRepository {
@@ -78,7 +79,18 @@ export class SongRepository {
         e instanceof Prisma.PrismaClientKnownRequestError &&
         e.code === 'P2002'
       ) {
-        throw new HttpException('이미 신청한 곡입니다.', 409);
+        const song = await this.prisma.song.findFirstOrThrow({
+          where: {
+            songListId: requestSongInput.songListId,
+            email: requestSongInput.email,
+          },
+        });
+
+        throw new JsonException('이미 신청한 곡입니다.', 409, {
+          artist: song.artist,
+          title: song.title,
+          email: song.email,
+        });
       }
     }
   }

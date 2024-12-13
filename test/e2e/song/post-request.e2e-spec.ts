@@ -122,7 +122,7 @@ describe('POST /songs - 곡 신청', () => {
     expect(song).not.toBeNull();
   });
 
-  it('동일한 이메일, 아티스트, 제목으로 신청한 곡이 있다면 409를 반환한다', async () => {
+  it('동일한 이메일로 신청한 곡이 있다면 409와 함께 기존에 있던 곡을 반환한다', async () => {
     // given
     const user = await prisma.user.create({
       data: {
@@ -149,14 +149,21 @@ describe('POST /songs - 곡 신청', () => {
     });
 
     // when
-    const { status } = await request(app.getHttpServer()).post('/songs').send({
-      userId: user.id,
-      email: 'example@example.com',
-      artist: '아티스트2',
-      title: '제목2',
-    });
+    const { status, body } = await request(app.getHttpServer())
+      .post('/songs')
+      .send({
+        userId: user.id,
+        email: 'example@example.com',
+        artist: '아티스트2',
+        title: '제목2',
+      });
 
     // then
     expect(status).toBe(409);
+    expect(body.detail).toEqual({
+      artist: '아티스트',
+      title: '제목',
+      email: 'example@example.com',
+    });
   });
 });

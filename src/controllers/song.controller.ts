@@ -7,6 +7,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  UseFilters,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,6 +21,7 @@ import { CurrentUser } from 'src/common/decorators';
 import { SongService } from 'src/providers/song.service';
 import { CloseDto, RequestSongDto } from './dto/song/request';
 import { SongListResponseDto, SongListDetailDto } from './dto/song/response';
+import { JsonExceptionFilter } from 'src/common/filter';
 
 @ApiTags('songs')
 @ApiResponse({ status: 400, description: '유효성 검사 실패' })
@@ -58,6 +60,7 @@ export class SongController {
   @ApiResponse({ status: 404, description: 'OPENED 상태가 아님' })
   @ApiResponse({ status: 409, description: '이미 신청한 곡' })
   @Post()
+  @UseFilters(JsonExceptionFilter)
   async requestSong(@Body() requestSongDto: RequestSongDto) {
     await this.songService.requestSong(requestSongDto);
     return;
