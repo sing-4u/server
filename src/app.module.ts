@@ -7,6 +7,8 @@ import { UserModule } from './modules/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { SongModule } from './modules/song.module';
+import { GlobalFilter } from './common/filter/global.filter';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -29,6 +31,12 @@ import { SongModule } from './modules/song.module';
     AuthModule,
     UserModule,
     SongModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: GlobalFilter,
+    },
   ],
 })
 export class AppModule {}

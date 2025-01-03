@@ -142,10 +142,17 @@ export class AuthController {
     return await this.authService.updatePassword(userId, newPassword);
   }
 
+  @ApiOperation({ summary: 'accT 테스트 엔드포인트' })
   @ApiBearerAuth()
   @Get('test')
   @UseGuards(JwtGuard)
   async test() {
     return 'test';
+  }
+
+  @ApiOperation({ summary: '500에러' })
+  @Post('error')
+  async error() {
+    throw new Error('error');
   }
 }
