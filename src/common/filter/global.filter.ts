@@ -15,7 +15,13 @@ export class GlobalFilter implements ExceptionFilter {
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const request = ctx.getRequest<
+      Request & {
+        user?: {
+          id: string;
+        };
+      }
+    >();
 
     let status;
     let responseBody;
@@ -38,6 +44,7 @@ export class GlobalFilter implements ExceptionFilter {
             params: request.params,
             query: request.query,
             body: request.body,
+            user: request.user || '',
           },
           exception.stack,
         );
