@@ -37,6 +37,7 @@ import {
   UserProfileDto,
   GetUsersResponseDto,
   RequestFormDto,
+  GetUserResponseDto,
 } from './dto/user/response';
 import { CurrentUser } from 'src/common/decorators';
 
@@ -159,6 +160,17 @@ export class UserController {
     } else {
       return await this.userService.getAll(query);
     }
+  }
+
+  @ApiOperation({ summary: '유저 조회' })
+  @ApiParam({ name: 'userId', required: true })
+  @ApiResponse({ status: 200, description: '성공', type: GetUserResponseDto })
+  @ApiResponse({ status: 404, description: '유저 없음' })
+  @Get(':userId')
+  async getUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<GetUserResponseDto> {
+    return await this.userService.getOne(userId);
   }
 
   @ApiOperation({ summary: '신청폼 받기' })

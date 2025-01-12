@@ -134,4 +134,16 @@ export class UserService {
       isOpened: user.isOpened,
     };
   }
+
+  async getOne(userId: string) {
+    const user = await this.userRepository.findOneById(userId);
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      image: user.image ? this.awsService.getProfileImageUrl(user.image) : null,
+      isOpened: user.isOpened,
+    };
+  }
 }
