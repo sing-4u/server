@@ -59,11 +59,11 @@ model Song {
 }
 
 model Admin {
-  id         String    @id
-  name       String
-  email      String
-  password   String
-  permission String
-  createdAt  DateTime  @default(now())
-  lastLogin  DateTime?
+  id        String    @id
+  name      String
+  email     String
+  password  String
+  role      String
+  createdAt DateTime  @default(now())
+  lastLogin DateTime?
 }
