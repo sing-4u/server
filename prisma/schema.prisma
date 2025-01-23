@@ -57,3 +57,13 @@ model Song {
 
   @@id([songListId, email])
 }
+
+model Admin {
+  id         String    @id
+  name       String
+  email      String
+  password   String
+  permission String
+  createdAt  DateTime  @default(now())
+  lastLogin  DateTime?
+}
