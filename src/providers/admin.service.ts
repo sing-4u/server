@@ -2,12 +2,14 @@ import { Injectable, HttpException } from '@nestjs/common';
 import { AdminRepository } from 'src/repositories/admin.repository';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
+import { AwsService } from './aws.service';
 
 @Injectable()
 export class AdminService {
   constructor(
     private adminRepository: AdminRepository,
     private jwtService: JwtService,
+    private awsService: AwsService,
   ) {}
 
   async register(input: RegisterInput) {
@@ -52,6 +54,47 @@ export class AdminService {
       password: hashedPassword,
       role: input.role,
     });
+  }
+
+  async getArtists(query: {
+    index: number;
+    sort: 'latest' | 'isOpen' | 'songListCount';
+    search?: string;
+  }) {
+    const artists = await this.adminRepository.getArtists(query);
+
+    return artists.map((artist) => {
+      return {
+        id: artist.id,
+        name: artist.name,
+        email: artist.email,
+        image: artist.image
+          ? this.awsService.getProfileImageUrl(artist.image)
+          : null,
+        createdAt: artist.createdAt,
+        isOpened: artist.isOpened,
+        songListCount: artist._count.SongList,
+      };
+    });
+  }
+
+  async getArtist(id: string) {
+    const artist = await this.adminRepository.getArtist(id);
+    const requests = await this.adminRepository.getRequest(artist.email);
+    const songLists = await this.adminRepository.getSongList(id);
+
+    return {
+      artist,
+      requests: requests.map((request) => {
+        return {
+          createdAt: request.createdAt,
+          songArtist: request.artist,
+          songTitle: request.title,
+          artistName: request.songList.user.name,
+        };
+      }),
+      songLists,
+    };
   }
 }
 
