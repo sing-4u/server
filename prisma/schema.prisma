@@ -51,9 +51,20 @@ model Song {
   email      String
   artist     String
   title      String
-  songListId String @db.Uuid
+  songListId String   @db.Uuid
+  createdAt  DateTime @default(now())
 
   songList SongList @relation(fields: [songListId], references: [id], onDelete: Cascade)
 
   @@id([songListId, email])
+}
+
+model Admin {
+  id        String    @id
+  name      String
+  email     String
+  password  String
+  role      String
+  createdAt DateTime  @default(now())
+  lastLogin DateTime?
 }

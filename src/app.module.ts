@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { SongModule } from './modules/song.module';
 import { GlobalFilter } from './common/filter/global.filter';
 import { APP_FILTER } from '@nestjs/core';
+import { AdminModule } from './modules/admin.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { APP_FILTER } from '@nestjs/core';
     AuthModule,
     UserModule,
     SongModule,
+    AdminModule,
   ],
   providers: [
     {
