@@ -170,4 +170,57 @@ export class AdminRepository {
       },
     });
   }
+
+  async close(userId: string) {
+    const songList = await this.prisma.songList.findFirst({
+      where: {
+        userId,
+        endDate: null,
+      },
+    });
+
+    if (!songList) {
+      throw new Error('There is no open song list');
+    }
+
+    const [afterSongList] = await this.prisma.$transaction([
+      this.prisma.songList.update({
+        where: { id: songList.id },
+        data: { endDate: new Date() },
+        select: {
+          _count: {
+            select: {
+              songs: true,
+            },
+          },
+        },
+      }),
+      this.prisma.user.update({
+        where: { id: userId },
+        data: { isOpened: false },
+      }),
+    ]);
+
+    if (afterSongList._count.songs === 0) {
+      await this.prisma.songList.delete({
+        where: { id: songList.id },
+      });
+    }
+    return;
+  }
+
+  async open(userId: string) {
+    await this.prisma.$transaction([
+      this.prisma.songList.create({
+        data: {
+          userId,
+        },
+      }),
+      this.prisma.user.update({
+        where: { id: userId },
+        data: { isOpened: true },
+      }),
+    ]);
+    return;
+  }
 }
