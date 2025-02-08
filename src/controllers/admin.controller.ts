@@ -69,4 +69,18 @@ export class AdminController {
   async getArtist(@Param('id') id: string) {
     return await this.adminService.getArtist(id);
   }
+
+  @UseGuards(SuperAdminGuard)
+  @HttpCode(204)
+  @Put('artists/:id/open')
+  async openArtist(@Param('id') id: string) {
+    return await this.adminService.open(id);
+  }
+
+  @UseGuards(SuperAdminGuard)
+  @HttpCode(204)
+  @Put('artists/:id/close')
+  async closeArtist(@Param('id') id: string) {
+    return await this.adminService.close(id);
+  }
 }

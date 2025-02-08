@@ -96,6 +96,14 @@ export class AdminService {
       songLists,
     };
   }
+
+  async open(userId: string) {
+    return await this.adminRepository.open(userId);
+  }
+
+  async close(userId: string) {
+    return await this.adminRepository.close(userId);
+  }
 }
 
 type RegisterInput = {
