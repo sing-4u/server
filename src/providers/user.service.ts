@@ -74,6 +74,11 @@ export class UserService {
     }
   }
 
+  async deleteProfileImage(userId: string) {
+    await this.userRepository.updateProfileImage(userId, null);
+    return;
+  }
+
   async getMyInfo(userId: string) {
     let user = await this.userRepository.findOneById(userId);
     if (user.image) {

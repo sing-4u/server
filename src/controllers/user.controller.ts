@@ -113,6 +113,17 @@ export class UserController {
     return await this.userService.updateProfileImage(userId, image);
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '프로필 이미지 삭제' })
+  @ApiResponse({ status: 204, description: '성공' })
+  @UseGuards(JwtGuard)
+  @Delete('me/image')
+  @HttpCode(204)
+  async deleteProfileImage(@CurrentUser() userId: string) {
+    await this.userService.deleteProfileImage(userId);
+    return;
+  }
+
   @ApiOperation({ summary: '내 정보 조회' })
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: '성공', type: UserProfileDto })
