@@ -8,6 +8,7 @@ import {
   Param,
   ParseUUIDPipe,
   UseFilters,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,11 +16,12 @@ import {
   ApiBearerAuth,
   ApiResponse,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
 import { CurrentUser } from 'src/common/decorators';
 import { SongService } from 'src/providers/song.service';
-import { CloseDto, RequestSongDto } from './dto/song/request';
+import { CloseDto, RequestSongDto, SearchSongQuery } from './dto/song/request';
 import {
   SongListResponseDto,
   SongListDetailDto,
@@ -33,6 +35,22 @@ import { JsonExceptionFilter } from 'src/common/filter';
 @Controller('songs')
 export class SongController {
   constructor(private songService: SongService) {}
+
+  @ApiOperation({ summary: '곡 신청' })
+  @ApiBody({ type: RequestSongDto })
+  @ApiResponse({ status: 201, description: '곡 신청 성공' })
+  @ApiResponse({ status: 404, description: 'OPENED 상태가 아님' })
+  @ApiResponse({
+    status: 409,
+    description: '이미 신청한 곡',
+    type: ConflictResponseDto,
+  })
+  @Post()
+  @UseFilters(JsonExceptionFilter)
+  async requestSong(@Body() requestSongDto: RequestSongDto) {
+    await this.songService.requestSong(requestSongDto);
+    return;
+  }
 
   @ApiOperation({ summary: '신청곡 열기' })
   @ApiBearerAuth()
@@ -58,20 +76,13 @@ export class SongController {
     return;
   }
 
-  @ApiOperation({ summary: '곡 신청' })
-  @ApiBody({ type: RequestSongDto })
-  @ApiResponse({ status: 201, description: '곡 신청 성공' })
-  @ApiResponse({ status: 404, description: 'OPENED 상태가 아님' })
-  @ApiResponse({
-    status: 409,
-    description: '이미 신청한 곡',
-    type: ConflictResponseDto,
-  })
-  @Post()
-  @UseFilters(JsonExceptionFilter)
-  async requestSong(@Body() requestSongDto: RequestSongDto) {
-    await this.songService.requestSong(requestSongDto);
-    return;
+  @ApiOperation({ summary: '노래 검색' })
+  @ApiQuery({ name: 'query', type: 'string' })
+  @ApiResponse({ status: 200 })
+  @Get('search')
+  async search(@Query() { query }: SearchSongQuery) {
+    console.log(query);
+    return [];
   }
 
   @ApiOperation({ summary: '내 songList 전체 조회' })
