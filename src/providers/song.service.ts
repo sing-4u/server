@@ -1,9 +1,13 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { SongRepository } from 'src/repositories/song.repository';
+import { SpotifyService } from './spotify.service';
 
 @Injectable()
 export class SongService {
-  constructor(private songRepository: SongRepository) {}
+  constructor(
+    private songRepository: SongRepository,
+    private spotifyService: SpotifyService,
+  ) {}
   async open(userId: string) {
     const canOpen = await this.songRepository.canOpen(userId);
     if (!canOpen) {
