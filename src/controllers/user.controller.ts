@@ -37,7 +37,6 @@ import {
   ImageDto,
   UserProfileDto,
   GetUsersResponseDto,
-  RequestFormDto,
   GetUserResponseDto,
 } from './dto/user/response';
 import { CurrentUser } from 'src/common/decorators';
@@ -185,15 +184,5 @@ export class UserController {
     @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<GetUserResponseDto> {
     return await this.userService.getOne(userId);
-  }
-
-  @ApiOperation({ summary: '신청폼 받기' })
-  @ApiParam({ name: 'userId', required: true })
-  @ApiResponse({ status: 200, description: '성공', type: RequestFormDto })
-  @Get('form/:userId')
-  async getForm(
-    @Param('userId', ParseUUIDPipe) userId: string,
-  ): Promise<RequestFormDto> {
-    return await this.userService.getForm(userId);
   }
 }
