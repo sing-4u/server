@@ -64,81 +64,16 @@ describe('PATCH /users/me/image - 프로필 이미지 변경', () => {
     );
   });
 
-  it('프로필 이미지를 삭제한다', async () => {
+  it('이미지 파일이 없으면 400을 반환한다', async () => {
     // given
     const accessToken = await register(app, {});
-    const filePath = path.join(__dirname, 'test.png');
-    fs.writeFileSync(filePath, 'test-png');
-    const { body } = await request(app.getHttpServer())
-      .patch('/users/me/image')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .attach('image', filePath);
 
     // when
-    const { status, body: body2 } = await request(app.getHttpServer())
+    const { status } = await request(app.getHttpServer())
       .patch('/users/me/image')
       .set('Authorization', `Bearer ${accessToken}`);
 
     // then
-    expect(status).toBe(201);
-    expect(body2.image).toBeNull();
-    const s3Client = new S3Client({});
-    expect(async () => {
-      await s3Client.send(
-        new HeadObjectCommand({
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: `users/${body.image.split('/').pop()}`,
-        }),
-      );
-    }).rejects.toThrow();
-    const user = await prisma.user.findFirst();
-    expect(user!.image).toBeNull();
-  });
-
-  it('이미지 파일이 기존에 있을 때, 새로운 이미지 파일로 변경한다', async () => {
-    // given
-    const accessToken = await register(app, {});
-    const filePath = path.join(__dirname, 'test.png');
-    fs.writeFileSync(filePath, 'test-png');
-    const { body } = await request(app.getHttpServer())
-      .patch('/users/me/image')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .attach('image', filePath);
-
-    // when
-    const { status, body: body2 } = await request(app.getHttpServer())
-      .patch('/users/me/image')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .attach('image', filePath);
-
-    // then
-    expect(status).toBe(201);
-    expect(body2.image).not.toBeNull();
-    const s3Client = new S3Client({});
-    const response = await s3Client.send(
-      new HeadObjectCommand({
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: `users/${body2.image.split('/').pop()}`,
-      }),
-    );
-    expect(async () => {
-      await s3Client.send(
-        new HeadObjectCommand({
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: `users/${body.image.split('/').pop()}`,
-        }),
-      );
-    }).rejects.toThrow();
-    expect(response.$metadata.httpStatusCode).toEqual(200);
-    expect(body2.image).not.toEqual(body.image);
-
-    // cleanup
-    fs.unlinkSync(filePath);
-    await s3Client.send(
-      new DeleteObjectCommand({
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: `users/${body2.image.split('/').pop()}`,
-      }),
-    );
+    expect(status).toBe(400);
   });
 });

@@ -7,5 +7,5 @@ export class ImageDto {
     type: 'string',
     example: 'https://example.com/image.png',
   })
-  image: string | null;
+  image: string;
 }

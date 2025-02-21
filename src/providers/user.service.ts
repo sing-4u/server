@@ -52,26 +52,15 @@ export class UserService {
 
   async updateProfileImage(
     userId: string,
-    file?: Express.Multer.File,
-  ): Promise<{ image: string | null }> {
-    const user = await this.userRepository.findOneById(userId);
-
-    if (user.image) {
-      await this.awsService.deleteProfileImage(user.image);
-    }
-
-    if (!file) {
-      await this.userRepository.updateProfileImage(userId, null);
-      return { image: null };
-    } else {
-      const ext = file.originalname.split('.').pop();
-      const filename = `${uuidv4()}.${ext}`;
-      await this.awsService.uploadProfileImage(filename, file);
-      await this.userRepository.updateProfileImage(userId, filename);
-      return {
-        image: this.awsService.getProfileImageUrl(filename),
-      };
-    }
+    file: Express.Multer.File,
+  ): Promise<{ image: string }> {
+    const ext = file.originalname.split('.').pop();
+    const filename = `${uuidv4()}.${ext}`;
+    await this.awsService.uploadProfileImage(filename, file);
+    await this.userRepository.updateProfileImage(userId, filename);
+    return {
+      image: this.awsService.getProfileImageUrl(filename),
+    };
   }
 
   async deleteProfileImage(userId: string) {

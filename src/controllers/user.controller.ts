@@ -11,6 +11,7 @@ import {
   Query,
   Param,
   ParseUUIDPipe,
+  HttpException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -94,9 +95,8 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: '프로필 이미지 변경',
-    description:
-      '이미지 파일은 multipart/formdata 형식이며 이미지 파일이 없거나 null인 경우 이미지 삭제로 간주합니다',
+    summary: '프로필 이미지 업로드',
+    description: '이미지 파일은 multipart/formdata 형식',
   })
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
@@ -110,6 +110,9 @@ export class UserController {
     @CurrentUser() userId: string,
     @UploadedFile() image?: Express.Multer.File,
   ): Promise<ImageDto> {
+    if (!image) {
+      throw new HttpException('이미지 파일이 필요합니다', 400);
+    }
     return await this.userService.updateProfileImage(userId, image);
   }
 
