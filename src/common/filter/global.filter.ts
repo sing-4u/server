@@ -28,7 +28,14 @@ export class GlobalFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
-      responseBody = exception.getResponse();
+      if (exception.getResponse() instanceof Object) {
+        responseBody = exception.getResponse();
+      } else {
+        responseBody = {
+          statusCode: status,
+          message: exception.getResponse(),
+        };
+      }
     } else {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       responseBody = {
@@ -36,19 +43,17 @@ export class GlobalFilter implements ExceptionFilter {
         message: 'Internal Server Error',
       };
 
-      if (process.env.NODE_ENV !== 'test') {
-        this.logger.error(
-          {
-            method: request.method,
-            url: request.url,
-            params: request.params,
-            query: request.query,
-            body: request.body,
-            user: request.user || '',
-          },
-          exception.stack,
-        );
-      }
+      this.logger.error(
+        {
+          method: request.method,
+          url: request.url,
+          params: request.params,
+          query: request.query,
+          body: request.body,
+          user: request.user || '',
+        },
+        exception.stack,
+      );
     }
 
     response.status(status).json(responseBody);
