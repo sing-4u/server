@@ -53,4 +53,8 @@ export class SongService {
   async getSongListDetail(songListId: string) {
     return await this.songRepository.findSongListDetail(songListId);
   }
+
+  async searchSong(query: string) {
+    return await this.spotifyService.search(query);
+  }
 }

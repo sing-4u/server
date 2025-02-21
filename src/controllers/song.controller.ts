@@ -26,6 +26,7 @@ import {
   SongListResponseDto,
   SongListDetailDto,
   ConflictResponseDto,
+  SearchedSongDto,
 } from './dto/song/response';
 import { JsonExceptionFilter } from 'src/common/filter';
 
@@ -78,11 +79,12 @@ export class SongController {
 
   @ApiOperation({ summary: '노래 검색' })
   @ApiQuery({ name: 'query', type: 'string' })
-  @ApiResponse({ status: 200 })
+  @ApiResponse({ status: 200, type: SearchedSongDto, isArray: true })
   @Get('search')
-  async search(@Query() { query }: SearchSongQuery) {
-    console.log(query);
-    return [];
+  async search(
+    @Query() { query }: SearchSongQuery,
+  ): Promise<SearchedSongDto[]> {
+    return await this.songService.searchSong(query);
   }
 
   @ApiOperation({ summary: '내 songList 전체 조회' })
