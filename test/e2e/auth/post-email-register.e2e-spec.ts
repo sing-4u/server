@@ -30,6 +30,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test',
         password: 'test',
         name: 'test',
+        isArtist: false,
       });
 
     //then
@@ -44,6 +45,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test@test.com',
         password: 't1@',
         name: 'test',
+        isArtist: false,
       });
 
     //then
@@ -58,6 +60,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test@test.com',
         password: 'abcdefg12345678!@#$%%^&',
         name: 'test',
+        isArtist: false,
       });
 
     //then
@@ -72,6 +75,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test@test.com',
         password: 'abcdefdsfg!!',
         name: 'test',
+        isArtist: false,
       });
 
     //then
@@ -86,6 +90,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test@test.com',
         password: 'abcdefg1234',
         name: 'test',
+        isArtist: false,
       });
 
     //then
@@ -100,6 +105,21 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test@test.com',
         password: 'abcdefg1234!',
         name: '',
+        isArtist: false,
+      });
+
+    //then
+    expect(status).toBe(400);
+  });
+
+  it('isArtist가 없으면 400을 반환한다', async () => {
+    // when
+    const { status } = await request(app.getHttpServer())
+      .post('/auth/register/email')
+      .send({
+        email: 'test@test.com',
+        password: 'abcdefg1234!',
+        name: 'abc',
       });
 
     //then
@@ -114,6 +134,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test@test.com',
         password: 'abcdefg1234!',
         name: 'test',
+        isArtist: false,
       });
 
     //then
@@ -128,6 +149,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
       email: 'test@test.com',
       password: 'abcdefg1234!',
       name: 'test',
+      isArtist: false,
     });
 
     // when
@@ -137,6 +159,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test@test.com',
         password: 'abcdefg1234!',
         name: 'test',
+        isArtist: false,
       });
 
     //then
@@ -151,6 +174,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test@test.com',
         password: 'abcdefg1234!',
         name: 'test',
+        isArtist: false,
       });
 
     //then
@@ -167,6 +191,7 @@ describe('POST /register/email - 이메일 회원가입', () => {
         email: 'test@test.com',
         password: 'abcdefg1234!',
         name: 'test',
+        isArtist: false,
       });
 
     //then

@@ -11,6 +11,7 @@ export class UserRepository {
     email: string;
     password: string;
     name: string;
+    isArtist: boolean;
   }) {
     try {
       return await this.prisma.user.create({

@@ -18,6 +18,7 @@ export class AuthService {
     email: string;
     password: string;
     name: string;
+    isArtist: boolean;
   }) {
     const hashedPassword = await argon2.hash(registerInput.password);
     const { id } = await this.userRepository.createByEmail({
@@ -25,6 +26,7 @@ export class AuthService {
       email: registerInput.email,
       password: hashedPassword,
       name: registerInput.name,
+      isArtist: registerInput.isArtist,
     });
 
     const accessToken = this.createAccessToken(id);

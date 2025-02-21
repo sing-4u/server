@@ -51,6 +51,7 @@ describe('PATCH /refresh - 토큰 재발급', () => {
         email: 'test@test.com',
         password: 'abcdefg1234!',
         name: 'test',
+        isArtist: false,
       });
 
     // when

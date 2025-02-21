@@ -41,6 +41,7 @@ describe('POST /login/email - 이메일 로그인', () => {
       email: 'test@test.com',
       password: 'abcdefg1234!',
       name: 'test',
+      isArtist: false,
     });
 
     // when
@@ -61,6 +62,7 @@ describe('POST /login/email - 이메일 로그인', () => {
       email: 'test@test.com',
       password: 'abcdefg1234!',
       name: 'test',
+      isArtist: false,
     });
 
     // when
