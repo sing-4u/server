@@ -4,6 +4,7 @@ import { UserController } from 'src/controllers/user.controller';
 import { UserService } from 'src/providers/user.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { AwsModule } from './aws.module';
+import { SongModule } from './song.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AwsModule } from './aws.module';
       },
     }),
     AwsModule,
+    SongModule,
   ],
   controllers: [UserController],
   providers: [UserRepository, UserService],

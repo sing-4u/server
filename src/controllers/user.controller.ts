@@ -135,6 +135,17 @@ export class UserController {
     return await this.userService.getMyInfo(userId);
   }
 
+  @ApiOperation({ summary: 'isArtist toggle' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 204, description: '성공' })
+  @Patch('me/toggle-artist')
+  @UseGuards(JwtGuard)
+  @HttpCode(204)
+  async toggleIsArtist(@CurrentUser() userId: string) {
+    await this.userService.toggleIsArtist(userId);
+    return;
+  }
+
   @ApiOperation({ summary: '회원 탈퇴' })
   @ApiBearerAuth()
   @ApiResponse({ status: 204, description: '성공' })

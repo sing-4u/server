@@ -260,4 +260,16 @@ export class UserRepository {
       },
     });
   }
+
+  async toggleIsArtist(userId: string) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { isArtist: true },
+    });
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { isArtist: !user.isArtist },
+    });
+    return;
+  }
 }

@@ -3,12 +3,14 @@ import { UserRepository } from 'src/repositories/user.repository';
 import { AwsService } from './aws.service';
 import * as argon2 from 'argon2';
 import { v4 as uuidv4 } from 'uuid';
+import { SongRepository } from 'src/repositories/song.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UserRepository,
     private awsService: AwsService,
+    private songRepository: SongRepository,
   ) {}
 
   async updateName(userId: string, name: string) {
@@ -118,17 +120,6 @@ export class UserService {
     return users;
   }
 
-  async getForm(userId: string) {
-    const user = await this.userRepository.findOneById(userId);
-
-    return {
-      id: user.id,
-      name: user.name,
-      image: user.image ? this.awsService.getProfileImageUrl(user.image) : null,
-      isOpened: user.isOpened,
-    };
-  }
-
   async getOne(userId: string) {
     const user = await this.userRepository.findOneById(userId);
 
@@ -139,5 +130,16 @@ export class UserService {
       image: user.image ? this.awsService.getProfileImageUrl(user.image) : null,
       isOpened: user.isOpened,
     };
+  }
+
+  async toggleIsArtist(userId: string) {
+    const recentSongList =
+      await this.songRepository.findOneRecentSongList(userId);
+    if (recentSongList) {
+      await this.songRepository.close(userId, recentSongList.id);
+    }
+
+    await this.userRepository.toggleIsArtist(userId);
+    return;
   }
 }
