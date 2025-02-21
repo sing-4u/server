@@ -17,14 +17,17 @@ model User {
   refreshToken String?
   createdAt    DateTime @default(now())
   image        String?
+  description  String?
+  cover        String?
+  links        String[] @default([])
   isOpened     Boolean  @default(false)
+  isArtist     Boolean  @default(false)
 
   EmailCode EmailCode[]
   SongList  SongList[]
 
   @@unique([provider, providerId])
-  @@index([provider, providerId])
-  @@index([isOpened])
+  @@index([isArtist(sort: Desc), isOpened(sort: Desc), id(sort: Desc)])
 }
 
 model EmailCode {
