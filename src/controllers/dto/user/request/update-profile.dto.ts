@@ -24,7 +24,7 @@ export class UpdateProfileDto {
   @Length(1, 20)
   name: string;
 
-  @ApiProperty({ minLength: 0, maxLength: 80, nullable: true })
+  @ApiProperty({ minLength: 0, maxLength: 80, nullable: true, type: 'string' })
   @Transform(({ value }) => {
     if (!value || !(typeof value === 'string') || value.trim().length === 0) {
       return null;
@@ -35,7 +35,7 @@ export class UpdateProfileDto {
   @Length(1, 80)
   bio?: string | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, type: 'string' })
   @Transform(({ value }) => {
     if (!value || !(typeof value === 'string') || value.trim().length === 0) {
       return null;
