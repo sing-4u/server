@@ -12,6 +12,7 @@ import {
   Param,
   ParseUUIDPipe,
   HttpException,
+  Put,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -32,6 +33,7 @@ import {
   UpdatePasswordDto,
   UpdateImageDto,
   GetUserListDto,
+  UpdateProfileDto,
 } from './dto/user/request';
 import {
   ImageDto,
@@ -47,6 +49,33 @@ import { CurrentUser } from 'src/common/decorators';
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @ApiOperation({ summary: '내 정보 조회' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: '성공', type: UserProfileDto })
+  @Get('me')
+  @UseGuards(JwtGuard)
+  async getMe(@CurrentUser() userId: string): Promise<UserProfileDto> {
+    return await this.userService.getMyInfo(userId);
+  }
+
+  @ApiOperation({ summary: '내 정보 수정' })
+  @ApiBearerAuth()
+  @Put('me')
+  @UseGuards(JwtGuard)
+  async updateMe(@CurrentUser() userId: string, @Body() dto: UpdateProfileDto) {
+    console.log(dto);
+  }
+
+  @ApiOperation({ summary: '회원 탈퇴' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 204, description: '성공' })
+  @Delete('me')
+  @UseGuards(JwtGuard)
+  @HttpCode(204)
+  async deleteUser(@CurrentUser() userId: string) {
+    await this.userService.deleteUser(userId);
+  }
 
   @ApiOperation({ summary: '이름 변경' })
   @ApiBearerAuth()
@@ -126,15 +155,6 @@ export class UserController {
     return;
   }
 
-  @ApiOperation({ summary: '내 정보 조회' })
-  @ApiBearerAuth()
-  @ApiResponse({ status: 200, description: '성공', type: UserProfileDto })
-  @Get('me')
-  @UseGuards(JwtGuard)
-  async getMe(@CurrentUser() userId: string): Promise<UserProfileDto> {
-    return await this.userService.getMyInfo(userId);
-  }
-
   @ApiOperation({ summary: 'isArtist toggle' })
   @ApiBearerAuth()
   @ApiResponse({ status: 204, description: '성공' })
@@ -144,16 +164,6 @@ export class UserController {
   async toggleIsArtist(@CurrentUser() userId: string) {
     await this.userService.toggleIsArtist(userId);
     return;
-  }
-
-  @ApiOperation({ summary: '회원 탈퇴' })
-  @ApiBearerAuth()
-  @ApiResponse({ status: 204, description: '성공' })
-  @Delete('me')
-  @UseGuards(JwtGuard)
-  @HttpCode(204)
-  async deleteUser(@CurrentUser() userId: string) {
-    await this.userService.deleteUser(userId);
   }
 
   @ApiOperation({ summary: '유저 리스트 조회' })

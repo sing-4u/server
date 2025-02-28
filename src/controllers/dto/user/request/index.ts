@@ -3,3 +3,4 @@ export * from './update-email.dto';
 export * from './update-password.dto';
 export * from './update-image.dto';
 export * from './get-user-list.dto';
+export * from './update-profile.dto';
