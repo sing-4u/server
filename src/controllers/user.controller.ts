@@ -61,6 +61,7 @@ export class UserController {
 
   @ApiOperation({ summary: '내 정보 수정' })
   @ApiBearerAuth()
+  @ApiResponse({ status: 204, description: '성공' })
   @UseGuards(JwtGuard)
   @Put('me')
   @HttpCode(204)
