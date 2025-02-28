@@ -17,7 +17,7 @@ model User {
   refreshToken String?
   createdAt    DateTime @default(now())
   image        String?
-  description  String?
+  bio          String?
   cover        String?
   links        String[] @default([])
   isOpened     Boolean  @default(false)
