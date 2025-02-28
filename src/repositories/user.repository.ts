@@ -272,4 +272,25 @@ export class UserRepository {
     });
     return;
   }
+
+  async updateProfile(input: UpdateProfileInput) {
+    await this.prisma.user.update({
+      where: { id: input.userId },
+      data: {
+        name: input.name,
+        bio: input.bio,
+        cover: input.cover,
+        links: input.links,
+      },
+      select: { id: true },
+    });
+  }
 }
+
+type UpdateProfileInput = {
+  userId: string;
+  name: string;
+  bio: string | null;
+  cover: string | null;
+  links: string[];
+};

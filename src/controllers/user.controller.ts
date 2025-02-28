@@ -61,10 +61,17 @@ export class UserController {
 
   @ApiOperation({ summary: '내 정보 수정' })
   @ApiBearerAuth()
-  @Put('me')
   @UseGuards(JwtGuard)
+  @Put('me')
+  @HttpCode(204)
   async updateMe(@CurrentUser() userId: string, @Body() dto: UpdateProfileDto) {
-    console.log(dto);
+    await this.userService.updateProfile({
+      userId,
+      name: dto.name,
+      bio: dto.bio ?? null,
+      cover: dto.cover ?? null,
+      links: dto.links,
+    });
   }
 
   @ApiOperation({ summary: '회원 탈퇴' })

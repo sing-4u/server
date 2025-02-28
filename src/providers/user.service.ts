@@ -142,4 +142,26 @@ export class UserService {
     await this.userRepository.toggleIsArtist(userId);
     return;
   }
+
+  async updateProfile(input: UpdateProfileInput) {
+    const links = input.links.map(
+      ({ linkName, url }) => `${linkName}|~|${url}`,
+    );
+    await this.userRepository.updateProfile({
+      userId: input.userId,
+      name: input.name,
+      bio: input.bio,
+      cover: input.cover,
+      links,
+    });
+    return;
+  }
 }
+
+export type UpdateProfileInput = {
+  userId: string;
+  name: string;
+  bio: string | null;
+  cover: string | null;
+  links: { linkName: string; url: string }[];
+};

@@ -36,6 +36,12 @@ export class UpdateProfileDto {
   bio?: string | null;
 
   @ApiProperty({ nullable: true })
+  @Transform(({ value }) => {
+    if (!value || !(typeof value === 'string') || value.trim().length === 0) {
+      return null;
+    }
+    return value.trim();
+  })
   @IsOptional()
   @IsUrl()
   cover: string | null;
