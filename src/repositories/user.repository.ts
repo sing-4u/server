@@ -153,6 +153,10 @@ export class UserRepository {
         image: true,
         isOpened: true,
         provider: true,
+        isArtist: true,
+        bio: true,
+        cover: true,
+        links: true,
       },
     });
     if (!user) {

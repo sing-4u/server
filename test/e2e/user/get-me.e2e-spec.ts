@@ -41,6 +41,10 @@ describe('GET /users/me - 내 정보 조회', () => {
       image: null,
       isOpened: false,
       provider: 'EMAIL',
+      bio: null,
+      cover: null,
+      isArtist: true,
+      links: [],
     });
   });
 
@@ -50,7 +54,11 @@ describe('GET /users/me - 내 정보 조회', () => {
     const user = await prisma.user.findFirst();
     await prisma.user.update({
       where: { id: user!.id },
-      data: { image: 'image.png' },
+      data: {
+        image: 'image.png',
+        cover: 'https://github.com',
+        links: ['github|~|https://github.com'],
+      },
     });
 
     // when
@@ -67,6 +75,10 @@ describe('GET /users/me - 내 정보 조회', () => {
       image: expect.stringContaining('image.png'),
       isOpened: false,
       provider: 'EMAIL',
+      bio: null,
+      cover: 'https://github.com',
+      isArtist: true,
+      links: [{ linkName: 'github', url: 'https://github.com' }],
     });
   });
 });

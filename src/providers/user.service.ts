@@ -71,14 +71,22 @@ export class UserService {
   }
 
   async getMyInfo(userId: string) {
-    let user = await this.userRepository.findOneById(userId);
-    if (user.image) {
-      user = {
-        ...user,
-        image: this.awsService.getProfileImageUrl(user.image),
-      };
-    }
-    return user;
+    const user = await this.userRepository.findOneById(userId);
+    return {
+      id: user.id,
+      name: user.name,
+      image: user.image ? this.awsService.getProfileImageUrl(user.image) : null,
+      isArtist: user.isArtist,
+      bio: user.bio,
+      cover: user.cover,
+      links: user.links.map((link) => {
+        const [linkName, url] = link.split('|~|');
+        return { linkName, url };
+      }),
+      email: user.email,
+      isOpened: user.isOpened,
+      provider: user.provider,
+    };
   }
 
   async deleteUser(userId: string) {

@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
-class LinkDto {
+class UpdateLinkDto {
   @ApiProperty({ example: '인스타그램' })
   @Length(1, 20)
   linkName: string;
@@ -47,7 +47,7 @@ export class UpdateProfileDto {
   cover: string | null;
 
   @ApiProperty({
-    type: LinkDto,
+    type: UpdateLinkDto,
     isArray: true,
     nullable: true,
   })
@@ -55,6 +55,6 @@ export class UpdateProfileDto {
   @IsArray()
   @ArrayMaxSize(10)
   @ValidateNested({ each: true })
-  @Type(() => LinkDto)
-  links: LinkDto[];
+  @Type(() => UpdateLinkDto)
+  links: UpdateLinkDto[];
 }
