@@ -64,6 +64,9 @@ describe('GET /users/:userId - 유저 정보 받기', () => {
       email: 'test@test.com',
       name: '테스트 사용자',
       isOpened: true,
+      bio: null,
+      cover: null,
+      links: [],
     });
   });
 });

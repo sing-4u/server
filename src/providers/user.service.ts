@@ -137,6 +137,12 @@ export class UserService {
       name: user.name,
       image: user.image ? this.awsService.getProfileImageUrl(user.image) : null,
       isOpened: user.isOpened,
+      bio: user.bio,
+      cover: user.cover,
+      links: user.links.map((link) => {
+        const [linkName, url] = link.split('|~|');
+        return { linkName, url };
+      }),
     };
   }
 

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { LinkDto } from './user-profile.dto';
 
 export class GetUserResponseDto {
   @ApiProperty()
@@ -19,4 +20,13 @@ export class GetUserResponseDto {
 
   @ApiProperty()
   isOpened: boolean;
+
+  @ApiProperty({ type: 'string', nullable: true })
+  bio: string | null;
+
+  @ApiProperty({ type: 'string', nullable: true })
+  cover: string | null;
+
+  @ApiProperty({ type: LinkDto, isArray: true })
+  links: LinkDto[];
 }
