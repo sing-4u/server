@@ -220,9 +220,37 @@ export class UserRepository {
     return;
   }
 
-  async findAll({ index, size }: { index: number; size: number }) {
+  async findArtists({
+    cursor,
+    size,
+  }: {
+    cursor?: string | null;
+    size: number;
+  }) {
+    const where: Prisma.UserWhereInput = {
+      isArtist: true,
+    };
+    if (cursor) {
+      const [isOpened, id] = cursor.split('_');
+
+      if (isOpened === 'true') {
+        where.OR = [
+          {
+            isOpened: true,
+            id: {
+              lt: id,
+            },
+          },
+          {
+            isOpened: false,
+          },
+        ];
+      } else {
+        where.isOpened = false;
+        where.id = { lt: id };
+      }
+    }
     return await this.prisma.user.findMany({
-      skip: index * size,
       take: size,
       select: {
         id: true,
@@ -230,23 +258,54 @@ export class UserRepository {
         image: true,
         isOpened: true,
       },
-      orderBy: {
-        isOpened: 'desc',
-      },
+      orderBy: [
+        {
+          isOpened: 'desc',
+        },
+        {
+          id: 'desc',
+        },
+      ],
+      where,
     });
   }
 
   async findAllByName({
-    index,
+    cursor,
     size,
     name,
   }: {
-    index: number;
+    cursor?: string | null;
     size: number;
     name: string;
   }) {
+    const where: Prisma.UserWhereInput = {
+      isArtist: true,
+      name: {
+        contains: name,
+      },
+    };
+    if (cursor) {
+      const [isOpened, id] = cursor.split('_');
+
+      if (isOpened === 'true') {
+        where.OR = [
+          {
+            isOpened: true,
+            id: {
+              lt: id,
+            },
+          },
+          {
+            isOpened: false,
+          },
+        ];
+      } else {
+        where.isOpened = false;
+        where.id = { lt: id };
+      }
+    }
     return await this.prisma.user.findMany({
-      skip: index * size,
       take: size,
       select: {
         id: true,
@@ -254,14 +313,15 @@ export class UserRepository {
         image: true,
         isOpened: true,
       },
-      where: {
-        name: {
-          contains: name,
+      where,
+      orderBy: [
+        {
+          isOpened: 'desc',
         },
-      },
-      orderBy: {
-        isOpened: 'desc',
-      },
+        {
+          id: 'desc',
+        },
+      ],
     });
   }
 

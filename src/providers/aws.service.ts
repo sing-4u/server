@@ -33,7 +33,11 @@ export class AwsService {
     );
   }
 
-  getProfileImageUrl(filename: string) {
-    return `${this.configService.get('AWS_CLOUDFRONT_URL')}/users/${filename}`;
+  getProfileImageUrl(filename: string): string;
+  getProfileImageUrl(filename: string | null): string | null;
+  getProfileImageUrl(filename: string | null) {
+    if (filename)
+      return `${this.configService.get('AWS_CLOUDFRONT_URL')}/users/${filename}`;
+    return null;
   }
 }

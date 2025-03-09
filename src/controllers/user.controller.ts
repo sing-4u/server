@@ -21,7 +21,6 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiConsumes,
-  ApiQuery,
   ApiParam,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
@@ -32,13 +31,13 @@ import {
   UpdateEmailDto,
   UpdatePasswordDto,
   UpdateImageDto,
-  GetUserListDto,
+  GetUsersRequest,
   UpdateProfileDto,
 } from './dto/user/request';
 import {
   ImageDto,
   UserProfileDto,
-  GetUsersResponseDto,
+  UsersResponse,
   GetUserResponseDto,
 } from './dto/user/response';
 import { CurrentUser } from 'src/common/decorators';
@@ -175,32 +174,26 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '유저 리스트 조회' })
-  @ApiQuery({ name: 'name', required: false })
-  @ApiQuery({
-    name: 'index',
-    required: true,
-    type: Number,
-    description: '0부터 시작입니다',
-  })
-  @ApiQuery({ name: 'size', required: true, type: Number })
   @ApiResponse({
     status: 200,
     description: '성공',
-    type: GetUsersResponseDto,
-    isArray: true,
+    type: UsersResponse,
   })
   @Get()
   async getUsers(
-    @Query() query: GetUserListDto,
-  ): Promise<GetUsersResponseDto[]> {
-    if (query.name) {
+    @Query() { cursor, size, name }: GetUsersRequest,
+  ): Promise<UsersResponse> {
+    if (name) {
       return await this.userService.getAllByName({
-        index: query.index,
-        size: query.size,
-        name: query.name,
+        cursor,
+        size: size ?? 8,
+        name,
       });
     } else {
-      return await this.userService.getAll(query);
+      return await this.userService.getAll({
+        cursor,
+        size: size ?? 8,
+      });
     }
   }
 

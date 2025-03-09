@@ -98,34 +98,36 @@ export class UserService {
     return;
   }
 
-  async getAll(query: { index: number; size: number }) {
-    let users = await this.userRepository.findAll(query);
-    users = users.map((user) => {
-      if (user.image) {
-        return {
-          ...user,
-          image: this.awsService.getProfileImageUrl(user.image),
-        };
-      }
-      return user;
-    });
-
-    return users;
+  async getAll({ cursor, size }: { cursor?: string | null; size: number }) {
+    const users = await this.userRepository.findArtists({ cursor, size });
+    let nextCursor: string | null = null;
+    if (users.length === size)
+      nextCursor = `${users[users.length - 1].isOpened}_${users[users.length - 1].id}`;
+    return {
+      nextCursor,
+      users: users.map((user) => ({
+        ...user,
+        image: this.awsService.getProfileImageUrl(user.image),
+      })),
+    };
   }
 
-  async getAllByName(query: { index: number; size: number; name: string }) {
-    let users = await this.userRepository.findAllByName(query);
-    users = users.map((user) => {
-      if (user.image) {
-        return {
-          ...user,
-          image: this.awsService.getProfileImageUrl(user.image),
-        };
-      }
-      return user;
-    });
-
-    return users;
+  async getAllByName(query: {
+    cursor?: string | null;
+    size: number;
+    name: string;
+  }) {
+    const users = await this.userRepository.findAllByName(query);
+    let nextCursor: string | null = null;
+    if (users.length === query.size)
+      nextCursor = `${users[users.length - 1].isOpened}_${users[users.length - 1].id}`;
+    return {
+      nextCursor,
+      users: users.map((user) => ({
+        ...user,
+        image: this.awsService.getProfileImageUrl(user.image),
+      })),
+    };
   }
 
   async getOne(userId: string) {

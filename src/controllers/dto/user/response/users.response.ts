@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetUsersResponseDto {
+class UserResponse {
   @ApiProperty()
   id: string;
 
@@ -16,4 +16,12 @@ export class GetUsersResponseDto {
 
   @ApiProperty()
   isOpened: boolean;
+}
+
+export class UsersResponse {
+  @ApiProperty({ type: 'string', nullable: true })
+  nextCursor: string | null;
+
+  @ApiProperty({ type: UserResponse, isArray: true })
+  users: UserResponse[];
 }
